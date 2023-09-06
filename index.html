@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Board</title>
+
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <aside>
+    <div class="control-box">
+      <textarea id=""></textarea>
+      <button class="add-task">add task</button>
+    </div>
+    <button class="clear-tasks">clear all</button>
+  </aside>
+  <div class="board">
+    <div class="sect todo-sect">
+      <h2 class="title">todo</h2>
+      <div class="task-cont">
+        <div class="task">
+          <p>Lorem ipsum dolor</p>
+          <button class="edit-task"><i class="fas fa-marker"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="sect in-progress-sect">
+      <h2 class="title">in progress</h2>
+      <div class="task-cont">
+        <div class="task">
+          <p>Lorem ipsum dolor</p>
+          <button class="edit-task"><i class="fas fa-marker"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="sect completed-sect">
+      <h2 class="title">completed</h2>
+      <div class="task-cont">
+        <div class="task">
+          <p> Lorem ipsum dolor</p>
+          <button class="edit-task"><i class="fas fa-marker"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
