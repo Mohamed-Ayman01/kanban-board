@@ -15,11 +15,26 @@
 </head>
 <body>
   <aside>
-    <div class="control-box">
-      <textarea id=""></textarea>
+    <div class="projects-control">
+      <div class="controls">
+        <input type="text" id="proj-input" placeholder="project name">
+        <button><i class="fas fa-folder-plus"></i></button>
+      </div>
+      <div class="projects-box">
+        <div class="proj active">
+          <p>Lorem, ipsum dolor.</p>
+          <button><i class="fas fa-wrench"></i></button>
+        </div>
+        <div class="proj">
+          <p>elit. Aliquid, neque.</p>
+          <button><i class="fas fa-wrench"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="task-control">
+      <textarea></textarea>
       <button class="add-task">add task</button>
     </div>
-    <button class="clear-tasks">clear all</button>
   </aside>
   <div class="board">
     <div class="sect todo-sect">
