@@ -46,6 +46,28 @@ function checkForTabs() {
   }
 }
 
+function notifyWith(message) {
+  let popUp = document.createElement("div");
+  popUp.classList.add("pop-up");
+  popUp.textContent = message;
+
+  document.body.append(popUp);
+
+  let popUp2 = document.querySelector(".pop-up");
+
+  setTimeout(() => {
+    popUp2.style.top = "10px";
+  }, 500)
+  
+  setTimeout(() => {
+    popUp2.style.top = "-80px";
+  }, 3000)
+
+  setTimeout(() => {
+    popUp2.remove();
+  }, 5000)
+}
+
 let addProjectInput = document.querySelector("aside input#proj-input");
 let addProjectBtn = document.querySelector("aside .controls button");
 
@@ -54,6 +76,7 @@ addProjectBtn.addEventListener("click", () => {
 
   let inputValue = addProjectInput.value;
   let inputValueValid = inputValue !== "" ? true : false;
+  addProjectInput.value = "";
 
   if (inputValueValid) {
     projects.push({ name: inputValue, isActive: false, tasks: [] });
@@ -61,8 +84,5 @@ addProjectBtn.addEventListener("click", () => {
     localStorage.setItem("projects-tabs", JSON.stringify(projects));
 
     appendTabsFrom(JSON.parse(localStorage.getItem("projects-tabs")));
-  } else {
-    window.alert("enter a valid name");
-    //! MAKE POP UP ALERT HERE
-  }
+  } else notifyWith("field is empty")
 });

@@ -21,6 +21,19 @@ body {
   --gray: #efefef;
 }
 
+.pop-up {
+  padding: 1rem 2rem;
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: top .3s;
+  background-color: var(--green-400);
+  color: white;
+  border-radius: 4px;
+  opacity: .9;
+}
+
 button {
   cursor: pointer;
   border: none;
