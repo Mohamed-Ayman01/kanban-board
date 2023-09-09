@@ -70,8 +70,7 @@ aside .projects-control .controls button {
 }
 
 aside .projects-control .controls button:hover {
-  background-color: white;
-  color: var(--green-200);
+  color: var(--green-300);
 }
 
 aside .projects-control .projects-box {
@@ -100,6 +99,10 @@ aside .projects-control .projects-box .proj.active {
 aside .projects-control .projects-box .proj p {
   color: white;
   flex: 1;
+}
+
+aside .projects-control .projects-box .proj.active p {
+  color: var(--green-300);
 }
 
 aside .projects-control .projects-box .proj > * {
@@ -174,27 +177,81 @@ aside .task-control button:hover::before {
 .board {
   flex: 1 1 80%;
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   padding: 2rem;
   background-color: var(--gray);
 }
 
+@media (max-width: 992px) {
+  .board {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
 .board .sect {
   background-color: var(--green-100);
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .board .sect .title {
-
+  padding: 1rem;
+  font-size: 2rem;
+  color: white;
+  background-color: var(--green-200);
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.board .sect .task-container {
-
+@media (max-width: 1012px) {
+  .board .sect .title {
+    font-size: 1.5rem
+  }
 }
 
-.board .sect .task-container .task {
-
+/*! ________________________________ FIX OVERFLOW ISSUE HERE ________________________________*/
+.board .sect .container {
+  max-height: 100%;
+  padding: 1rem .75rem;
+  overflow-y: auto;
 }
 
-.board .sect .task-container .task .edit-task {
+.board .sect .container .task-cont {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
+@media (max-width: 992px) {
+  .board .sect .container .task-cont {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+.board .sect .task-cont .task {
+  display: flex;
+  background-color: var(--gray);
+  overflow: hidden;
+  border-radius: 4px
+}
+
+.board .sect .task-cont .task > * {
+  padding: .5rem;
+}
+
+.board .sect .task-cont .task p {
+  flex: 1;
+}
+
+.board .sect .task-cont .task .edit-task {
+  background-color: var(--green-300);
+  color: white;
+  transition: color .3s;
+}
+
+.board .sect .task-cont .task .edit-task:hover {
+  color: var(--green-200)
 }
