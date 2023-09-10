@@ -76,14 +76,14 @@ aside .projects-control .controls input::placeholder {
 
 aside .projects-control .controls button {
   background-color: var(--green-200);
-  color: white;
+  color: var(--green-300);
   padding: .75rem;
   font-size: 1.2rem;
   transition: color .3s;
 }
 
 aside .projects-control .controls button:hover {
-  color: var(--green-300);
+  color: var(--gray);
 }
 
 aside .projects-control .projects-box {
@@ -125,10 +125,11 @@ aside .projects-control .projects-box .proj > * {
 aside .projects-control .projects-box .proj button {
   color: var(--green-300);
   background-color: white;
+  transition: color .2s;
 }
 
 aside .projects-control .projects-box .proj button:hover {
-  background-color: var(--gray);
+  color: var(--green-200);
 }
 
 aside .task-control {
@@ -147,7 +148,11 @@ aside .task-control textarea {
   border-radius: 2px;
   border: 2px solid white;
   color: white;
-  transition: border-color 200ms;
+  transition: background-color 200ms;
+}
+
+aside .task-control textarea:focus {
+  background-color: var(--green-400);
 }
 
 aside .task-control button {
