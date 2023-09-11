@@ -9,8 +9,7 @@
 body {
   display: flex;
   height: 100vh;
-  font-family: 'Open Sans', sans-serif;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Work Sans', sans-serif;
 }
 
 :root {
@@ -18,6 +17,10 @@ body {
   --green-200: #63c7b2;
   --green-300: #263d42;
   --green-400: #21353a;
+
+  --orange-100: #ff7700;
+  --orange-200: #ff5e00;
+
   --gray: #efefef;
 }
 
@@ -53,6 +56,8 @@ aside {
 
 aside .projects-control {
   flex-basis: 70%;
+  max-height: 70%;
+  overflow: auto;
   display: flex;
   flex-direction: column;
 }
@@ -123,13 +128,25 @@ aside .projects-control .projects-box .proj > * {
 }
 
 aside .projects-control .projects-box .proj button {
-  color: var(--green-300);
-  background-color: white;
-  transition: color .2s;
+  transition: background-color .2s;
 }
 
-aside .projects-control .projects-box .proj button:hover {
-  color: var(--green-200);
+aside .projects-control .projects-box .proj .edit-tab {
+  color: var(--green-300);
+  background-color: white;
+}
+
+aside .projects-control .projects-box .proj .edit-tab:hover {
+  background-color: var(--gray)
+}
+
+aside .projects-control .projects-box .proj .remove-tab {
+  color: white;
+  background-color: var(--orange-100);
+}
+
+aside .projects-control .projects-box .proj .remove-tab:hover {
+  background-color: var(--orange-200);
 }
 
 aside .task-control {
@@ -158,7 +175,6 @@ aside .task-control textarea:focus {
 aside .task-control button {
   padding: .5rem;
   font-size: 1.2rem;
-  text-transform: capitalize;
   background-color: transparent;
   color: var(--green-100);
   border: 2px solid var(--green-100);
@@ -220,7 +236,8 @@ aside .task-control button:hover::before {
   color: white;
   background-color: var(--green-200);
   text-align: center;
-  text-transform: uppercase;
+  text-transform: capitalize;
+  letter-spacing: 1px;
 }
 
 @media (max-width: 1012px) {
@@ -257,19 +274,31 @@ aside .task-control button:hover::before {
 }
 
 .board .sect .task-cont .task > * {
-  padding: .5rem;
+  padding: 1rem .5rem;
 }
 
 .board .sect .task-cont .task p {
   flex: 1;
 }
 
+.board .sect .task-cont .task button {
+  transition: .2s;
+}
+
 .board .sect .task-cont .task .edit-task {
-  background-color: var(--green-300);
   color: white;
-  transition: color .3s;
+  background-color: var(--green-300);
 }
 
 .board .sect .task-cont .task .edit-task:hover {
-  color: var(--green-200)
+  color: var(--green-200);
+}
+
+.board .sect .task-cont .task .remove-task {
+  color: white;
+  background-color: var(--orange-100);
+}
+
+.board .sect .task-cont .task .remove-task:hover {
+  background-color: var(--orange-200);
 }

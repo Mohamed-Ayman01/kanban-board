@@ -1,14 +1,18 @@
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
 
-function appendTasksFrom(currentProjectP) {
-  let projectsData = JSON.parse(localStorage.getItem("projects-tabs"));
+function appendTasksFrom(activeProjectName) {
+  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
 
   for (obj of projectsData) {
-    if (obj.name === currentProjectP.textContent) {
+    if (obj.name === activeProjectName) {
       let todoCont = document.querySelector(".board .todo-sect .task-cont");
-      let inProgressCont = document.querySelector(".board .in-progress-sect .task-cont");
-      let completedCont = document.querySelector(".board .completed-sect .task-cont");
+      let inProgressCont = document.querySelector(
+        ".board .in-progress-sect .task-cont",
+      );
+      let completedCont = document.querySelector(
+        ".board .completed-sect .task-cont",
+      );
 
       todoCont.innerHTML = "";
       inProgressCont.innerHTML = "";
@@ -21,15 +25,25 @@ function appendTasksFrom(currentProjectP) {
         let p = document.createElement("p");
         p.textContent = task.value;
 
-        let button = document.createElement("button");
-        button.classList.add("edit-task");
+        let editBtn = document.createElement("button");
+        editBtn.classList.add("edit-task");
 
         let buttonIco = document.createElement("i");
-        buttonIco.classList.add("fas", "fa-wrench");
+        buttonIco.classList.add("fas", "fa-pen-to-square");
 
-        button.append(buttonIco);
+        editBtn.append(buttonIco);
 
-        taskBox.append(p, button);
+        taskBox.append(p, editBtn);
+
+        let removeBtn = document.createElement("button");
+        removeBtn.classList.add("remove-task");
+
+        let removeBtnIco = document.createElement("i");
+        removeBtnIco.classList.add("fas", "fa-trash-can");
+
+        removeBtn.append(removeBtnIco);
+
+        taskBox.append(p, editBtn, removeBtn);
 
         if (task.status === 1) {
           todoCont.append(taskBox);
@@ -38,12 +52,9 @@ function appendTasksFrom(currentProjectP) {
         } else if (task.status === 3) {
           completedCont.append(taskBox);
         }
-
       });
     }
   }
-
-  localStorage.setItem("projects-tabs", JSON.stringify(projectsData));
 }
 
 function appendTabsFrom(projectsArr) {
@@ -54,19 +65,28 @@ function appendTabsFrom(projectsArr) {
 
   projectsArr.forEach((project) => {
     let proj = document.createElement("div");
-    project.isActive === true ? proj.classList.add("active") : "";
+    project.isActive ? proj.classList.add("active") : "";
     proj.classList.add("proj");
+    proj.setAttribute("data-name", project.name)
 
     let p = document.createElement("p");
     p.textContent = project.name;
 
-    let btn = document.createElement("button");
-    let btnIco = document.createElement("i");
-    btnIco.classList.add("fas", "fa-wrench");
+    let editBtn = document.createElement("button");
+    editBtn.classList.add("edit-tab")
 
-    btn.append(btnIco);
+    let editBtnIco = document.createElement("i");
+    editBtnIco.classList.add("fas", "fa-pen-to-square");
+    editBtn.append(editBtnIco);
 
-    proj.append(p, btn);
+    let removeBtn = document.createElement("button");
+    removeBtn.classList.add("remove-tab")
+
+    let removeBtnIco = document.createElement("i");
+    removeBtnIco.classList.add("fas", "fa-trash-can");
+    removeBtn.append(removeBtnIco);
+
+    proj.append(p, editBtn,removeBtn);
 
     projectsBox.append(proj);
   });
@@ -76,38 +96,31 @@ function appendTabsFrom(projectsArr) {
   allProjects.forEach((proj) => {
     if (!proj.classList.contains("active")) return;
 
-    let projChilds = Array.from(proj.children);
-
-    projChilds.forEach((child) => {
-      if (child.tagName === "P") {
-        appendTasksFrom(child);
-      }
-    });
+    appendTasksFrom(proj.getAttribute("data-name"));
   });
 }
 
 function checkForTabs() {
-  if (Boolean(localStorage.getItem("projects-tabs"))) {
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-tabs")));
+  if (Boolean(localStorage.getItem("projects-data")) && JSON.parse(localStorage.getItem("projects-data")).length > 0 ) {
+    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
   } else {
     let projectsData = [
       {
         name: "project 1",
         isActive: true,
-        tasks: [
-          { value: Math.random(), status: 2 },
-          { value: Math.random(), status: 3 },
-        ],
+        tasks: [],
       },
     ];
 
-    localStorage.setItem("projects-tabs", JSON.stringify(projectsData));
+    localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-tabs")));
+    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
   }
 }
 
 function notifyWith(message) {
+  if (document.querySelector(".pop-up"))
+    document.querySelector(".pop-up").remove();
   let popUp = document.createElement("div");
   popUp.classList.add("pop-up");
   popUp.textContent = message;
@@ -134,7 +147,7 @@ let addProjectInput = document.querySelector("aside input#proj-input");
 let addProjectBtn = document.querySelector("aside .controls button");
 
 addProjectBtn.addEventListener("click", () => {
-  let projects = JSON.parse(localStorage.getItem("projects-tabs"));
+  let projects = JSON.parse(localStorage.getItem("projects-data"));
 
   let inputValue = addProjectInput.value;
   let inputValueValid = inputValue !== "" ? true : false;
@@ -142,24 +155,21 @@ addProjectBtn.addEventListener("click", () => {
   addProjectInput.value = "";
 
   for (obj of projects) {
-    if (obj.name === inputValue) return notifyWith("this project already exsists")
+    if (obj.name === inputValue)
+      return notifyWith("this project already exsists");
   }
-
 
   if (inputValueValid) {
     projects.push({
       name: inputValue,
       isActive: false,
-      tasks: [
-        { value: Math.random(), status: 2 },
-        { value: Math.random(), status: 3 },
-      ],
+      tasks: [],
     });
 
-    localStorage.setItem("projects-tabs", JSON.stringify(projects));
+    localStorage.setItem("projects-data", JSON.stringify(projects));
 
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-tabs")));
-  } else notifyWith("field is empty");
+    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+  } else notifyWith("input field is empty");
 });
 
 //! Toggle between projects tabs
@@ -178,7 +188,7 @@ window.addEventListener("click", (e) => {
 
   currentElParent.classList.add("active");
 
-  let projectsData = JSON.parse(localStorage.getItem("projects-tabs"));
+  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
 
   for (obj of projectsData) {
     if (obj.name === currentEl.textContent) {
@@ -188,7 +198,55 @@ window.addEventListener("click", (e) => {
     }
   }
 
-  localStorage.setItem("projects-tabs", JSON.stringify(projectsData));
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-  appendTasksFrom(currentEl);
+  appendTasksFrom(currentElParent.getAttribute("data-name"));
+});
+
+//! Add new task
+let taskTextArea = document.querySelector("aside .task-control textarea");
+let addTaskBtn = document.querySelector("aside .task-control .add-task");
+
+addTaskBtn.addEventListener("click", () => {
+  let taskValue = taskTextArea.value;
+  if (taskValue === "") return notifyWith("input field is empty");
+  taskTextArea.value = "";
+
+  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+
+  for (object of projectsData) {
+    if (object.isActive) {
+      object.tasks.push({ value: taskValue, status: 1 });
+    }
+  }
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+  appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")))
+});
+
+//! edit/remove project
+
+window.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove-tab")) {
+    let projectName = e.target.parentNode.getAttribute("data-name");
+    let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+    let newProjectsData = projectsData.filter((obj) => {
+      return obj.name !== projectName;
+    });
+
+    localStorage.setItem("projects-data", JSON.stringify(newProjectsData))
+
+    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+  } else if (e.target.parentNode.classList.contains("remove-tab")) {
+    let projectName = e.target.parentNode.parentNode.getAttribute("data-name");
+    let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+    let newProjectsData = projectsData.filter((obj) => {
+      return obj.name !== projectName;
+    });
+
+    localStorage.setItem("projects-data", JSON.stringify(newProjectsData))
+
+    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+  }
 });
