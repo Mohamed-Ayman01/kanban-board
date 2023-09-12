@@ -1,8 +1,12 @@
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
 
+function getFromStorage(item) {
+  return JSON.parse(localStorage.getItem(item));
+}
+
 function appendTasksFrom(activeProjectName) {
-  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+  let projectsData = getFromStorage("projects-data");
 
   for (obj of projectsData) {
     if (obj.name === activeProjectName) {
@@ -101,8 +105,8 @@ function appendTabsFrom(projectsArr) {
 }
 
 function checkForTabs() {
-  if (Boolean(localStorage.getItem("projects-data")) && JSON.parse(localStorage.getItem("projects-data")).length > 0 ) {
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+  if (Boolean(localStorage.getItem("projects-data")) && getFromStorage("projects-data").length > 0 ) {
+    appendTabsFrom(getFromStorage("projects-data"));
   } else {
     let projectsData = [
       {
@@ -114,7 +118,7 @@ function checkForTabs() {
 
     localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+    appendTabsFrom(getFromStorage("projects-data"));
   }
 }
 
@@ -147,7 +151,7 @@ let addProjectInput = document.querySelector("aside input#proj-input");
 let addProjectBtn = document.querySelector("aside .controls button");
 
 addProjectBtn.addEventListener("click", () => {
-  let projects = JSON.parse(localStorage.getItem("projects-data"));
+  let projects = getFromStorage("projects-data");
 
   let inputValue = addProjectInput.value;
   let inputValueValid = inputValue !== "" ? true : false;
@@ -168,7 +172,7 @@ addProjectBtn.addEventListener("click", () => {
 
     localStorage.setItem("projects-data", JSON.stringify(projects));
 
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+    appendTabsFrom(getFromStorage("projects-data"));
   } else notifyWith("input field is empty");
 });
 
@@ -188,7 +192,7 @@ window.addEventListener("click", (e) => {
 
   currentElParent.classList.add("active");
 
-  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+  let projectsData = getFromStorage("projects-data");
 
   for (obj of projectsData) {
     if (obj.name === currentEl.textContent) {
@@ -212,41 +216,114 @@ addTaskBtn.addEventListener("click", () => {
   if (taskValue === "") return notifyWith("input field is empty");
   taskTextArea.value = "";
 
-  let projectsData = JSON.parse(localStorage.getItem("projects-data"));
+  let projectsData = getFromStorage("projects-data");
 
   for (object of projectsData) {
     if (object.isActive) {
+      for (task of object.tasks) {
+        if (task.value === taskValue) return notifyWith("this task already exsist")
+      }
+
       object.tasks.push({ value: taskValue, status: 1 });
     }
   }
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-  appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")))
+  appendTabsFrom(getFromStorage("projects-data"))
 });
 
-//! edit/remove project
+//! remove project btn
 
 window.addEventListener("click", (e) => {
+  let projectName; 
   if (e.target.classList.contains("remove-tab")) {
-    let projectName = e.target.parentNode.getAttribute("data-name");
-    let projectsData = JSON.parse(localStorage.getItem("projects-data"));
-    let newProjectsData = projectsData.filter((obj) => {
-      return obj.name !== projectName;
-    });
-
-    localStorage.setItem("projects-data", JSON.stringify(newProjectsData))
-
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+    projectName = e.target.parentNode.getAttribute("data-name")
   } else if (e.target.parentNode.classList.contains("remove-tab")) {
-    let projectName = e.target.parentNode.parentNode.getAttribute("data-name");
-    let projectsData = JSON.parse(localStorage.getItem("projects-data"));
-    let newProjectsData = projectsData.filter((obj) => {
-      return obj.name !== projectName;
-    });
+    projectName = e.target.parentNode.parentNode.getAttribute("data-name")
+  } else return;
 
-    localStorage.setItem("projects-data", JSON.stringify(newProjectsData))
+  let projectsData = getFromStorage("projects-data").filter((obj) =>  obj.name !== projectName);
+  
+  localStorage.setItem("projects-data", JSON.stringify(projectsData))
+  
+  appendTabsFrom(getFromStorage("projects-data"));
+});
 
-    appendTabsFrom(JSON.parse(localStorage.getItem("projects-data")));
+//! edit project btn
+
+window.addEventListener("click", (e) => {
+  let projectName;
+  if (e.target.classList.contains("edit-tab")) {
+    projectName = e.target.parentNode.getAttribute("data-name")
+  } else if (e.target.parentNode.classList.contains("edit-tab")) {
+    projectName = e.target.parentNode.parentNode.getAttribute("data-name")
+  } else return;
+
+  let container = document.createElement("div")
+  container.classList.add("container")
+
+  let inputModal = document.createElement("div");
+  inputModal.classList.add("input-modal");
+
+  let layover = document.createElement("div");
+  layover.classList.add("input-modal-layover");
+
+  let input = document.createElement("input");
+  input.setAttribute("data-name", projectName)
+  input.placeholder = "new name";
+
+  let confirmBtn = document.createElement("button");
+  confirmBtn.classList.add("confirm-btn");
+  confirmBtn.textContent = `confirm`;
+  
+  let exitBtn = document.createElement("button");
+  exitBtn.classList.add("exit-btn");
+  exitBtn.innerHTML = `x`;
+
+  
+  inputModal.append(input, confirmBtn, exitBtn);
+  
+  container.append(layover, inputModal)
+
+  document.body.append(container);
+
+  input.focus()
+});
+
+//! Confirm new name btn
+
+window.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("confirm-btn")) return;
+
+  let input = e.target.parentNode.querySelector("input");
+  let newName = input.value;
+
+  if (newName === "") return notifyWith("input field is empty")
+
+  let projectsData = getFromStorage("projects-data");
+
+  for (obj of projectsData) {
+    if (obj.name === newName) return notifyWith("this project name already used")
   }
+
+  for (obj of projectsData) {
+    if (obj.name === input.getAttribute("data-name")) {
+      obj.name = newName;
+    }
+  }
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+  appendTabsFrom(getFromStorage("projects-data"));
+
+  e.target.parentNode.parentNode.remove();
+});
+
+//! Exit modal btn
+
+window.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("exit-btn")) return;
+
+  e.target.parentNode.parentNode.remove();
 });
