@@ -25,6 +25,17 @@ function appendTasksFrom(activeProjectName) {
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
         taskBox.classList.add("task");
+        
+        taskBox.draggable = true;
+        taskBox.setAttribute("data-value", task.value)
+
+        taskBox.addEventListener("dragstart", () => {
+          taskBox.classList.add("dragging")
+        });
+
+        taskBox.addEventListener("dragend", () => {
+          taskBox.classList.remove("dragging")
+        });
 
         let p = document.createElement("p");
         p.textContent = task.value;
@@ -326,4 +337,42 @@ window.addEventListener("click", (e) => {
   if (!e.target.classList.contains("exit-btn")) return;
 
   e.target.parentNode.parentNode.remove();
+});
+
+
+//! Drag and drop tasks
+let taskSects = document.querySelectorAll(".board .sect");
+
+taskSects.forEach(sect => {
+  sect.addEventListener("dragover", (e) => {
+    e.preventDefault();
+
+    let dragging = document.querySelector(".dragging");
+    let taskCont = sect.querySelector(".task-cont");
+
+    let projectsData = getFromStorage("projects-data");
+
+    for (obj of projectsData) {
+      if (!obj.isActive) continue;
+
+      for (task of obj.tasks) {
+        if (task.value !== dragging.getAttribute("data-value")) continue;
+
+        if (taskCont.id === "todo") {
+          console.log(1)
+          task.status = 1;
+        } else if (taskCont.id === "in-progress") {
+          console.log(2)
+          task.status = 2;
+        } else if (taskCont.id === "completed") {
+          console.log(3)
+          task.status = 3;
+        }
+      }
+    }
+
+    localStorage.setItem("projects-data", JSON.stringify(projectsData))
+
+    taskCont.append(dragging);
+  })
 });

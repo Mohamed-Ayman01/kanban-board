@@ -321,6 +321,10 @@ aside .task-control button:hover::before {
   border-radius: 4px
 }
 
+.board .sect .task-cont .task.dragging {
+  opacity: .5;
+} 
+
 .board .sect .task-cont .task > * {
   padding: 1rem .5rem;
 }
