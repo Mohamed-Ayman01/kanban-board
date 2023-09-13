@@ -302,7 +302,7 @@ window.addEventListener("click", (e) => {
   input.focus()
 });
 
-//! Confirm new name btn
+//! Confirm new project name btn
 
 window.addEventListener("click", (e) => {
   if (!e.target.classList.contains("confirm-btn")) return;
@@ -341,6 +341,7 @@ window.addEventListener("click", (e) => {
 
 
 //! Drag and drop tasks
+
 let taskSects = document.querySelectorAll(".board .sect");
 
 taskSects.forEach(sect => {
@@ -359,13 +360,10 @@ taskSects.forEach(sect => {
         if (task.value !== dragging.getAttribute("data-value")) continue;
 
         if (taskCont.id === "todo") {
-          console.log(1)
           task.status = 1;
         } else if (taskCont.id === "in-progress") {
-          console.log(2)
           task.status = 2;
         } else if (taskCont.id === "completed") {
-          console.log(3)
           task.status = 3;
         }
       }
@@ -375,4 +373,40 @@ taskSects.forEach(sect => {
 
     taskCont.append(dragging);
   })
+});
+
+//! remove task btn
+
+window.addEventListener("click", (e) => {
+  let taskValue; 
+  if (e.target.classList.contains("remove-task")) {
+    taskValue = e.target.parentNode.getAttribute("data-value")
+  } else if (e.target.parentNode.classList.contains("remove-task")) {
+    taskValue = e.target.parentNode.parentNode.getAttribute("data-value")
+  } else return;
+
+  let projectsData = getFromStorage("projects-data");
+  let newActiveProjectTasks = [];
+
+  for (obj of projectsData) {
+    if (!obj.isActive) continue;
+
+    for (task of obj.tasks) {
+      if (task.value != taskValue) {
+        newActiveProjectTasks.push(task)
+      }
+    }
+
+    obj.tasks = newActiveProjectTasks;
+  }
+  
+  localStorage.setItem("projects-data", JSON.stringify(projectsData))
+
+  let projects = document.querySelectorAll(".projects-box .proj");
+
+  projects.forEach((proj) => {
+    if (!proj.classList.contains("active")) return;
+
+    appendTasksFrom(proj.getAttribute("data-name"));
+  });
 });
