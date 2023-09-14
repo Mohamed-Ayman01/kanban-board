@@ -244,7 +244,7 @@ addTaskBtn.addEventListener("click", () => {
   appendTabsFrom(getFromStorage("projects-data"))
 });
 
-//! remove project btn
+//! remove project
 
 window.addEventListener("click", (e) => {
   let projectName; 
@@ -261,7 +261,7 @@ window.addEventListener("click", (e) => {
   appendTabsFrom(getFromStorage("projects-data"));
 });
 
-//! edit project btn
+//! edit project
 
 window.addEventListener("click", (e) => {
   let projectName;
@@ -287,12 +287,40 @@ window.addEventListener("click", (e) => {
   let confirmBtn = document.createElement("button");
   confirmBtn.classList.add("confirm-btn");
   confirmBtn.textContent = `confirm`;
+
+  confirmBtn.addEventListener("click", function () {
+    let input = this.parentNode.querySelector("input");
+    let newName = input.value;
+  
+    if (newName === "") return notifyWith("input field is empty")
+  
+    let projectsData = getFromStorage("projects-data");
+  
+    for (obj of projectsData) {
+      if (obj.name === newName) return notifyWith("this project name already used")
+    }
+  
+    for (obj of projectsData) {
+      if (obj.name === input.getAttribute("data-name")) {
+        obj.name = newName;
+      }
+    }
+  
+    localStorage.setItem("projects-data", JSON.stringify(projectsData));
+  
+    appendTabsFrom(getFromStorage("projects-data"));
+  
+    this.parentNode.parentNode.remove();
+  })
   
   let exitBtn = document.createElement("button");
   exitBtn.classList.add("exit-btn");
   exitBtn.innerHTML = `x`;
 
-  
+  exitBtn.addEventListener("click", function () {
+    this.parentNode.parentNode.remove();
+  });
+
   inputModal.append(input, confirmBtn, exitBtn);
   
   container.append(layover, inputModal)
@@ -301,44 +329,6 @@ window.addEventListener("click", (e) => {
 
   input.focus()
 });
-
-//! Confirm new project name btn
-
-window.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("confirm-btn")) return;
-
-  let input = e.target.parentNode.querySelector("input");
-  let newName = input.value;
-
-  if (newName === "") return notifyWith("input field is empty")
-
-  let projectsData = getFromStorage("projects-data");
-
-  for (obj of projectsData) {
-    if (obj.name === newName) return notifyWith("this project name already used")
-  }
-
-  for (obj of projectsData) {
-    if (obj.name === input.getAttribute("data-name")) {
-      obj.name = newName;
-    }
-  }
-
-  localStorage.setItem("projects-data", JSON.stringify(projectsData));
-
-  appendTabsFrom(getFromStorage("projects-data"));
-
-  e.target.parentNode.parentNode.remove();
-});
-
-//! Exit modal btn
-
-window.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("exit-btn")) return;
-
-  e.target.parentNode.parentNode.remove();
-});
-
 
 //! Drag and drop tasks
 
@@ -375,7 +365,7 @@ taskSects.forEach(sect => {
   })
 });
 
-//! remove task btn
+//! remove task
 
 window.addEventListener("click", (e) => {
   let taskValue; 
@@ -409,4 +399,84 @@ window.addEventListener("click", (e) => {
 
     appendTasksFrom(proj.getAttribute("data-name"));
   });
+});
+
+//! edit task
+
+window.addEventListener("click", (e) => {
+  let taskValue; 
+  if (e.target.classList.contains("edit-task")) {
+    taskValue = e.target.parentNode.getAttribute("data-value")
+  } else if (e.target.parentNode.classList.contains("edit-task")) {
+    taskValue = e.target.parentNode.parentNode.getAttribute("data-value")
+  } else return;
+
+  // ! Make function to create modal
+  let container = document.createElement("div")
+  container.classList.add("container")
+
+  let inputModal = document.createElement("div");
+  inputModal.classList.add("input-modal");
+
+  let layover = document.createElement("div");
+  layover.classList.add("input-modal-layover");
+
+  let input = document.createElement("input");
+  input.setAttribute("data-value", taskValue)
+  input.placeholder = "new name";
+
+  let confirmBtn = document.createElement("button");
+  confirmBtn.classList.add("confirm-btn");
+  confirmBtn.textContent = `confirm`;
+
+  confirmBtn.addEventListener("click", function () {
+    let input = this.parentNode.querySelector("input");
+    let newName = input.value;
+
+    if (newName === "") return notifyWith("input field is empty")
+
+    let projectsData = getFromStorage("projects-data");
+
+    for (obj of projectsData) {
+      if (!obj.isActive) continue;
+
+      for (task of obj.tasks) {
+        if (task.value === newName) return notifyWith("this task already exsist")
+      }
+
+      for (task of obj.tasks) {
+        if (task.value != taskValue) continue;
+
+        task.value = newName;
+      }
+    }
+
+    localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+    let projects = document.querySelectorAll(".projects-box .proj");
+
+    projects.forEach((proj) => {
+      if (!proj.classList.contains("active")) return;
+  
+      appendTasksFrom(proj.getAttribute("data-name"));
+    });
+
+    this.parentNode.parentNode.remove();
+  })
+  
+  let exitBtn = document.createElement("button");
+  exitBtn.classList.add("exit-btn");
+  exitBtn.innerHTML = `x`;
+
+  exitBtn.addEventListener("click", function () {
+    this.parentNode.parentNode.remove();
+  });
+
+  inputModal.append(input, confirmBtn, exitBtn);
+  
+  container.append(layover, inputModal)
+
+  document.body.append(container);
+
+  input.focus();
 });

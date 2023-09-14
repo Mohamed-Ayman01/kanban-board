@@ -38,7 +38,7 @@ body {
 }
 
 .input-modal {
-  height: 130px;
+  height: 150px;
   padding: 1rem 2rem;
   display: flex;
   justify-content: center;
@@ -68,6 +68,7 @@ body {
   background: none;
   border: 1px solid var(--green-200);
   color: white;
+  font-size: 1rem;
 }
 
 .input-modal .confirm-btn {
@@ -75,13 +76,14 @@ body {
   background: var(--green-200);
   border: 1px solid var(--green-200);
   color: white;
+  font-size: 1rem;
 }
 
 .input-modal .exit-btn {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 0.5rem;
+  padding: .75rem;
   background: red;
   color: white;
   border-top-right-radius: 4px;
@@ -126,7 +128,6 @@ aside .projects-control .controls input {
 
 aside .projects-control .controls input::placeholder {
   color: rgb(183, 183, 183);
-  font-size: 1rem;
 }
 
 aside .projects-control .controls button {
