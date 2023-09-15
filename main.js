@@ -1,11 +1,32 @@
+class Project {
+  constructor(name, isActive, tasks) {
+    this.name = name;
+    this.isActive = isActive;
+    this.tasks = tasks;
+    this.completion = Math.round((tasks.filter(el => el.status == 3) * 100) / (tasks.length));
+  }
+}
+
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
+
+//! change completion status in stoarage
+function calcCompletion(projectsData) {
+  for (obj of projectsData) {
+    if (!obj.isActive) continue
+    obj.completion = (obj.tasks.filter(el => el.status == 3).length * 100) / (obj.tasks.length);
+  }
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
+}
 
 function getFromStorage(item) {
   return JSON.parse(localStorage.getItem(item));
 }
 
 function appendTasksFrom(activeProjectName) {
+  calcCompletion(getFromStorage("projects-data"));
+
   let projectsData = getFromStorage("projects-data");
 
   for (obj of projectsData) {
@@ -22,6 +43,17 @@ function appendTasksFrom(activeProjectName) {
       inProgressCont.innerHTML = "";
       completedCont.innerHTML = "";
 
+      if (document.querySelector(".board span")) {
+        document.querySelector(".board span").remove();
+      }
+
+      let board = document.querySelector(".board");
+
+      let span = document.createElement("span");
+      span.textContent = `${obj.completion ?? 0}%`;
+
+      board.append(span)
+
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
         taskBox.classList.add("task");
@@ -30,11 +62,15 @@ function appendTasksFrom(activeProjectName) {
         taskBox.setAttribute("data-value", task.value)
 
         taskBox.addEventListener("dragstart", () => {
-          taskBox.classList.add("dragging")
+          taskBox.classList.add("dragging");
         });
 
         taskBox.addEventListener("dragend", () => {
-          taskBox.classList.remove("dragging")
+          taskBox.classList.remove("dragging");
+
+          calcCompletion(getFromStorage("projects-data"))
+
+          document.querySelector(".board span").textContent = `${obj.completion ?? 0}%`;
         });
 
         let p = document.createElement("p");
@@ -119,13 +155,7 @@ function checkForTabs() {
   if (Boolean(localStorage.getItem("projects-data")) && getFromStorage("projects-data").length > 0 ) {
     appendTabsFrom(getFromStorage("projects-data"));
   } else {
-    let projectsData = [
-      {
-        name: "project 1",
-        isActive: true,
-        tasks: [],
-      },
-    ];
+    let projectsData = [new Project("project 1", true, [])];
 
     localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
@@ -175,11 +205,7 @@ addProjectBtn.addEventListener("click", () => {
   }
 
   if (inputValueValid) {
-    projects.push({
-      name: inputValue,
-      isActive: false,
-      tasks: [],
-    });
+    projects.push(new Project(inputValue, false, []));
 
     localStorage.setItem("projects-data", JSON.stringify(projects));
 
