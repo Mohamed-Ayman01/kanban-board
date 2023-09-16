@@ -3,7 +3,9 @@ class Project {
     this.name = name;
     this.isActive = isActive;
     this.tasks = tasks;
-    this.completion = Math.round((tasks.filter(el => el.status == 3) * 100) / (tasks.length));
+    this.completion = Math.round(
+      (tasks.filter((el) => el.status == 3) * 100) / tasks.length,
+    );
   }
 }
 
@@ -13,8 +15,10 @@ window.addEventListener("load", checkForTabs);
 //! change completion status in stoarage
 function calcCompletion(projectsData) {
   for (obj of projectsData) {
-    if (!obj.isActive) continue
-    obj.completion = (obj.tasks.filter(el => el.status == 3).length * 100) / (obj.tasks.length);
+    if (!obj.isActive) continue;
+    obj.completion =
+      (obj.tasks.filter((el) => el.status == 3).length * 100) /
+      obj.tasks.length;
   }
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
@@ -52,14 +56,14 @@ function appendTasksFrom(activeProjectName) {
       let span = document.createElement("span");
       span.textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
 
-      board.append(span)
+      board.append(span);
 
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
         taskBox.classList.add("task");
-        
+
         taskBox.draggable = true;
-        taskBox.setAttribute("data-value", task.value)
+        taskBox.setAttribute("data-value", task.value);
 
         taskBox.addEventListener("dragstart", () => {
           taskBox.classList.add("dragging");
@@ -68,7 +72,7 @@ function appendTasksFrom(activeProjectName) {
         taskBox.addEventListener("dragend", () => {
           taskBox.classList.remove("dragging");
 
-          calcCompletion(getFromStorage("projects-data"))
+          calcCompletion(getFromStorage("projects-data"));
 
           document.querySelector(".board span").textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
         });
@@ -118,26 +122,26 @@ function appendTabsFrom(projectsArr) {
     let proj = document.createElement("div");
     project.isActive ? proj.classList.add("active") : "";
     proj.classList.add("proj");
-    proj.setAttribute("data-name", project.name)
+    proj.setAttribute("data-name", project.name);
 
     let p = document.createElement("p");
     p.textContent = project.name;
 
     let editBtn = document.createElement("button");
-    editBtn.classList.add("edit-tab")
+    editBtn.classList.add("edit-tab");
 
     let editBtnIco = document.createElement("i");
     editBtnIco.classList.add("fas", "fa-pen-to-square");
     editBtn.append(editBtnIco);
 
     let removeBtn = document.createElement("button");
-    removeBtn.classList.add("remove-tab")
+    removeBtn.classList.add("remove-tab");
 
     let removeBtnIco = document.createElement("i");
     removeBtnIco.classList.add("fas", "fa-trash-can");
     removeBtn.append(removeBtnIco);
 
-    proj.append(p, editBtn,removeBtn);
+    proj.append(p, editBtn, removeBtn);
 
     projectsBox.append(proj);
   });
@@ -152,7 +156,10 @@ function appendTabsFrom(projectsArr) {
 }
 
 function checkForTabs() {
-  if (Boolean(localStorage.getItem("projects-data")) && getFromStorage("projects-data").length > 0 ) {
+  if (
+    Boolean(localStorage.getItem("projects-data")) &&
+    getFromStorage("projects-data").length > 0
+  ) {
     appendTabsFrom(getFromStorage("projects-data"));
   } else {
     let projectsData = [new Project("project 1", true, [])];
@@ -258,7 +265,8 @@ addTaskBtn.addEventListener("click", () => {
   for (object of projectsData) {
     if (object.isActive) {
       for (task of object.tasks) {
-        if (task.value === taskValue) return notifyWith("this task already exsist")
+        if (task.value === taskValue)
+          return notifyWith("this task already exsist");
       }
 
       object.tasks.push({ value: taskValue, status: 1 });
@@ -267,21 +275,21 @@ addTaskBtn.addEventListener("click", () => {
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-  appendTabsFrom(getFromStorage("projects-data"))
+  appendTabsFrom(getFromStorage("projects-data"));
 });
 
 //! remove project
 
 window.addEventListener("click", (e) => {
-  let projectName; 
+  let projectName;
   if (e.target.classList.contains("remove-tab")) {
-    projectName = e.target.parentNode.getAttribute("data-name")
+    projectName = e.target.parentNode.getAttribute("data-name");
   } else if (e.target.parentNode.classList.contains("remove-tab")) {
-    projectName = e.target.parentNode.parentNode.getAttribute("data-name")
+    projectName = e.target.parentNode.parentNode.getAttribute("data-name");
   } else return;
 
   let projectsData = getFromStorage("projects-data");
-  
+
   for (obj of projectsData) {
     if (obj.name === projectName && obj.isActive) {
       let todoCont = document.querySelector(".board .todo-sect .task-cont");
@@ -298,10 +306,10 @@ window.addEventListener("click", (e) => {
     }
   }
 
-  projectsData = projectsData.filter((obj) =>  obj.name !== projectName)
+  projectsData = projectsData.filter((obj) => obj.name !== projectName);
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
-  
+
   appendTabsFrom(getFromStorage("projects-data"));
 });
 
@@ -310,13 +318,13 @@ window.addEventListener("click", (e) => {
 window.addEventListener("click", (e) => {
   let projectName;
   if (e.target.classList.contains("edit-tab")) {
-    projectName = e.target.parentNode.getAttribute("data-name")
+    projectName = e.target.parentNode.getAttribute("data-name");
   } else if (e.target.parentNode.classList.contains("edit-tab")) {
-    projectName = e.target.parentNode.parentNode.getAttribute("data-name")
+    projectName = e.target.parentNode.parentNode.getAttribute("data-name");
   } else return;
 
-  let container = document.createElement("div")
-  container.classList.add("container")
+  let container = document.createElement("div");
+  container.classList.add("container");
 
   let inputModal = document.createElement("div");
   inputModal.classList.add("input-modal");
@@ -325,7 +333,7 @@ window.addEventListener("click", (e) => {
   layover.classList.add("input-modal-layover");
 
   let input = document.createElement("input");
-  input.setAttribute("data-name", projectName)
+  input.setAttribute("data-name", projectName);
   input.placeholder = "new name";
 
   let confirmBtn = document.createElement("button");
@@ -335,28 +343,29 @@ window.addEventListener("click", (e) => {
   confirmBtn.addEventListener("click", function () {
     let input = this.parentNode.querySelector("input");
     let newName = input.value;
-  
-    if (newName === "") return notifyWith("input field is empty")
-  
+
+    if (newName === "") return notifyWith("input field is empty");
+
     let projectsData = getFromStorage("projects-data");
-  
+
     for (obj of projectsData) {
-      if (obj.name === newName) return notifyWith("this project name already used")
+      if (obj.name === newName)
+        return notifyWith("this project name already used");
     }
-  
+
     for (obj of projectsData) {
       if (obj.name === input.getAttribute("data-name")) {
         obj.name = newName;
       }
     }
-  
+
     localStorage.setItem("projects-data", JSON.stringify(projectsData));
-  
+
     appendTabsFrom(getFromStorage("projects-data"));
-  
+
     this.parentNode.parentNode.remove();
-  })
-  
+  });
+
   let exitBtn = document.createElement("button");
   exitBtn.classList.add("exit-btn");
   exitBtn.innerHTML = `x`;
@@ -366,19 +375,19 @@ window.addEventListener("click", (e) => {
   });
 
   inputModal.append(input, confirmBtn, exitBtn);
-  
-  container.append(layover, inputModal)
+
+  container.append(layover, inputModal);
 
   document.body.append(container);
 
-  input.focus()
+  input.focus();
 });
 
 //! Drag and drop tasks
 
 let taskSects = document.querySelectorAll(".board .sect");
 
-taskSects.forEach(sect => {
+taskSects.forEach((sect) => {
   sect.addEventListener("dragover", (e) => {
     e.preventDefault();
 
@@ -403,20 +412,20 @@ taskSects.forEach(sect => {
       }
     }
 
-    localStorage.setItem("projects-data", JSON.stringify(projectsData))
+    localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
     taskCont.append(dragging);
-  })
+  });
 });
 
 //! remove task
 
 window.addEventListener("click", (e) => {
-  let taskValue; 
+  let taskValue;
   if (e.target.classList.contains("remove-task")) {
-    taskValue = e.target.parentNode.getAttribute("data-value")
+    taskValue = e.target.parentNode.getAttribute("data-value");
   } else if (e.target.parentNode.classList.contains("remove-task")) {
-    taskValue = e.target.parentNode.parentNode.getAttribute("data-value")
+    taskValue = e.target.parentNode.parentNode.getAttribute("data-value");
   } else return;
 
   let projectsData = getFromStorage("projects-data");
@@ -427,14 +436,14 @@ window.addEventListener("click", (e) => {
 
     for (task of obj.tasks) {
       if (task.value != taskValue) {
-        newActiveProjectTasks.push(task)
+        newActiveProjectTasks.push(task);
       }
     }
 
     obj.tasks = newActiveProjectTasks;
   }
-  
-  localStorage.setItem("projects-data", JSON.stringify(projectsData))
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
   let projects = document.querySelectorAll(".projects-box .proj");
 
@@ -448,16 +457,16 @@ window.addEventListener("click", (e) => {
 //! edit task
 
 window.addEventListener("click", (e) => {
-  let taskValue; 
+  let taskValue;
   if (e.target.classList.contains("edit-task")) {
-    taskValue = e.target.parentNode.getAttribute("data-value")
+    taskValue = e.target.parentNode.getAttribute("data-value");
   } else if (e.target.parentNode.classList.contains("edit-task")) {
-    taskValue = e.target.parentNode.parentNode.getAttribute("data-value")
+    taskValue = e.target.parentNode.parentNode.getAttribute("data-value");
   } else return;
 
   // ! Make function to create modal
-  let container = document.createElement("div")
-  container.classList.add("container")
+  let container = document.createElement("div");
+  container.classList.add("container");
 
   let inputModal = document.createElement("div");
   inputModal.classList.add("input-modal");
@@ -466,7 +475,7 @@ window.addEventListener("click", (e) => {
   layover.classList.add("input-modal-layover");
 
   let input = document.createElement("input");
-  input.setAttribute("data-value", taskValue)
+  input.setAttribute("data-value", taskValue);
   input.placeholder = "new name";
 
   let confirmBtn = document.createElement("button");
@@ -477,7 +486,7 @@ window.addEventListener("click", (e) => {
     let input = this.parentNode.querySelector("input");
     let newName = input.value;
 
-    if (newName === "") return notifyWith("input field is empty")
+    if (newName === "") return notifyWith("input field is empty");
 
     let projectsData = getFromStorage("projects-data");
 
@@ -485,7 +494,8 @@ window.addEventListener("click", (e) => {
       if (!obj.isActive) continue;
 
       for (task of obj.tasks) {
-        if (task.value === newName) return notifyWith("this task already exsist")
+        if (task.value === newName)
+          return notifyWith("this task already exsist");
       }
 
       for (task of obj.tasks) {
@@ -501,13 +511,13 @@ window.addEventListener("click", (e) => {
 
     projects.forEach((proj) => {
       if (!proj.classList.contains("active")) return;
-  
+
       appendTasksFrom(proj.getAttribute("data-name"));
     });
 
     this.parentNode.parentNode.remove();
-  })
-  
+  });
+
   let exitBtn = document.createElement("button");
   exitBtn.classList.add("exit-btn");
   exitBtn.innerHTML = `x`;
@@ -517,20 +527,19 @@ window.addEventListener("click", (e) => {
   });
 
   inputModal.append(input, confirmBtn, exitBtn);
-  
-  container.append(layover, inputModal)
+
+  container.append(layover, inputModal);
 
   document.body.append(container);
 
   input.focus();
 });
 
-
 // ! menu on phone
 
 let menuBtn = document.querySelector("aside .menu");
 let menuBtnIco = menuBtn.querySelector("i");
-let sideBar = document.querySelector("aside"); 
+let sideBar = document.querySelector("aside");
 
 menuBtn.addEventListener("click", () => {
   if (menuBtn.classList.contains("show")) {
