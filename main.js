@@ -50,7 +50,7 @@ function appendTasksFrom(activeProjectName) {
       let board = document.querySelector(".board");
 
       let span = document.createElement("span");
-      span.textContent = `completed ${obj.completion ?? 0}% of tasks`;
+      span.textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
 
       board.append(span)
 
@@ -70,7 +70,7 @@ function appendTasksFrom(activeProjectName) {
 
           calcCompletion(getFromStorage("projects-data"))
 
-          document.querySelector(".board span").textContent = `completed ${obj.completion ?? 0}% of tasks`;
+          document.querySelector(".board span").textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
         });
 
         let p = document.createElement("p");
@@ -280,9 +280,27 @@ window.addEventListener("click", (e) => {
     projectName = e.target.parentNode.parentNode.getAttribute("data-name")
   } else return;
 
-  let projectsData = getFromStorage("projects-data").filter((obj) =>  obj.name !== projectName);
+  let projectsData = getFromStorage("projects-data");
   
-  localStorage.setItem("projects-data", JSON.stringify(projectsData))
+  for (obj of projectsData) {
+    if (obj.name === projectName && obj.isActive) {
+      let todoCont = document.querySelector(".board .todo-sect .task-cont");
+      let inProgressCont = document.querySelector(
+        ".board .in-progress-sect .task-cont",
+      );
+      let completedCont = document.querySelector(
+        ".board .completed-sect .task-cont",
+      );
+
+      todoCont.innerHTML = "";
+      inProgressCont.innerHTML = "";
+      completedCont.innerHTML = "";
+    }
+  }
+
+  projectsData = projectsData.filter((obj) =>  obj.name !== projectName)
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
   
   appendTabsFrom(getFromStorage("projects-data"));
 });
