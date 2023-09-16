@@ -50,7 +50,7 @@ function appendTasksFrom(activeProjectName) {
       let board = document.querySelector(".board");
 
       let span = document.createElement("span");
-      span.textContent = `${obj.completion ?? 0}%`;
+      span.textContent = `completed ${obj.completion ?? 0}% of tasks`;
 
       board.append(span)
 
@@ -70,7 +70,7 @@ function appendTasksFrom(activeProjectName) {
 
           calcCompletion(getFromStorage("projects-data"))
 
-          document.querySelector(".board span").textContent = `${obj.completion ?? 0}%`;
+          document.querySelector(".board span").textContent = `completed ${obj.completion ?? 0}% of tasks`;
         });
 
         let p = document.createElement("p");
@@ -505,4 +505,21 @@ window.addEventListener("click", (e) => {
   document.body.append(container);
 
   input.focus();
+});
+
+
+// ! menu on phone
+
+let menuBtn = document.querySelector("aside .menu");
+let menuBtnIco = menuBtn.querySelector("i");
+let sideBar = document.querySelector("aside"); 
+
+menuBtn.addEventListener("click", () => {
+  if (menuBtn.classList.contains("show")) {
+    menuBtnIco.className = "fas fa-bars";
+  } else {
+    menuBtnIco.className = "fas fa-x";
+  }
+  menuBtn.classList.toggle("show");
+  sideBar.classList.toggle("show");
 });

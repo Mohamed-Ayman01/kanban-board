@@ -35,12 +35,14 @@ body {
   color: white;
   border-radius: 4px;
   opacity: .9;
+  z-index: 100;
 }
 
 .input-modal {
-  height: 150px;
-  padding: 1rem 2rem;
+  height: 120px;
+  padding: 1rem 2.4rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -50,7 +52,8 @@ body {
   background-color: var(--green-400);
   color: white;
   border-radius: 4px;
-  opacity: .9;
+  opacity: .95;
+  z-index: 100;
 }
 
 .input-modal-layover {
@@ -61,6 +64,7 @@ body {
   left: 0;
   background-color: var(--green-200);
   opacity: .5;
+  z-index: 99;
 }
 
 .input-modal input {
@@ -94,10 +98,6 @@ button {
   border: none;
 }
 
-button:focus {
-  opacity: .7;
-}
-
 :is(input, textarea, button):focus {
   outline: none;
 }
@@ -107,6 +107,50 @@ aside {
   display: flex;
   flex-direction: column;
   background-color: var(--green-300);
+  position: relative;
+  overflow:visible;
+  transition: transform .4s;
+}
+
+aside.show {
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  aside {
+    transform: translateX(-100%);
+    position: absolute;
+    height: 100%;
+    z-index: 10;
+  }
+}
+
+aside .menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  transform: translateX(100%);
+  background-color: var(--green-300);
+  color: var(--green-200);
+  z-index: 10;
+  font-size: 1rem;
+  transition: .3s;
+}
+
+@media (min-width: 768px) {
+  aside .menu {
+    display: none;
+  }
+}
+
+aside .menu.show {
+  background-color: red;
+  color: white;
+}
+
+aside .menu:hover {
+  opacity: .9;
 }
 
 aside .projects-control {
@@ -172,6 +216,7 @@ aside .projects-control .projects-box .proj.active {
 aside .projects-control .projects-box .proj p {
   color: white;
   flex: 1;
+  word-break: break-all;
 }
 
 aside .projects-control .projects-box .proj.active p {
@@ -347,6 +392,7 @@ aside .task-control button:hover::before {
 
 .board .sect .task-cont .task p {
   flex: 1;
+  word-break: break-all;
 }
 
 .board .sect .task-cont .task button {
