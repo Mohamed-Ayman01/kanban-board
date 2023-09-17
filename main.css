@@ -12,6 +12,14 @@ body {
   font-family: 'Work Sans', sans-serif;
 }
 
+::-webkit-scrollbar {
+  background-color: var(--green-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--green-200);
+}
+
 :root {
   --green-100: #ccdbdc;
   --green-200: #63c7b2;
@@ -337,6 +345,7 @@ aside .task-control button:hover::before {
   background-color: var(--green-100);
   overflow: hidden;
   border-radius: 10px;
+  overflow-y: auto;
 }
 
 .board .sect .title {
@@ -355,11 +364,8 @@ aside .task-control button:hover::before {
   }
 }
 
-/*! ________________________________ FIX OVERFLOW ISSUE HERE ________________________________*/
 .board .sect .container {
-  max-height: 100%;
   padding: 1rem .75rem;
-  overflow-y: auto;
 }
 
 .board .sect .container .task-cont {
