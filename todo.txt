@@ -1,0 +1,6 @@
+
+make sortable drag and drop tasks (add order property to tasks)
+
+add timer and count time for each project
+
+check why "project 1" precent doesnt work
