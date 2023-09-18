@@ -1,6 +1,8 @@
 
-make sortable drag and drop tasks (add order property to tasks)
+[ x ] make precent progressBar
 
-add timer and count time for each project
+[ x ] check why "project 1" precent doesnt update values
 
-check why "project 1" precent doesnt work
+[  ] add timer and count time for each project
+
+[  ] make sortable drag and drop tasks (add order property to tasks)

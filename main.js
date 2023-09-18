@@ -16,9 +16,8 @@ window.addEventListener("load", checkForTabs);
 function calcCompletion(projectsData) {
   for (obj of projectsData) {
     if (!obj.isActive) continue;
-    obj.completion =
-      (obj.tasks.filter((el) => el.status == 3).length * 100) /
-      obj.tasks.length;
+
+    obj.completion = (obj.tasks.filter((el) => el.status == 3).length * 100) /obj.tasks.length;
   }
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
@@ -47,16 +46,21 @@ function appendTasksFrom(activeProjectName) {
       inProgressCont.innerHTML = "";
       completedCont.innerHTML = "";
 
-      if (document.querySelector(".board span")) {
-        document.querySelector(".board span").remove();
+      let progressBox = document.querySelector(".progress-data .completion-data");
+
+      if (document.querySelector(".progress-data .completion-data .progress-bar")) {
+        document.querySelector(".progress-data .completion-data .progress-bar").remove();
       }
 
-      let board = document.querySelector(".board");
+      let progressBar = document.createElement("div");
+      let progressValue = Math.round(obj.completion) ?? 0;
 
-      let span = document.createElement("span");
-      span.textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
+      progressBar.classList.add("progress-bar")
+      progressBar.setAttribute("data-progress", progressValue);
+      progressBar.innerHTML = `${progressValue}% &nbsp;`;
+      progressBar.style.width = `${progressValue}%`;
 
-      board.append(span);
+      progressBox.append(progressBar)
 
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
@@ -74,7 +78,20 @@ function appendTasksFrom(activeProjectName) {
 
           calcCompletion(getFromStorage("projects-data"));
 
-          document.querySelector(".board span").textContent = `completed ${Math.round(obj.completion) ?? 0}% of tasks`;
+          let objCompletion;
+
+          for (obj of getFromStorage("projects-data")) {
+            if (!obj.isActive) continue;
+
+            objCompletion = obj.completion;
+          }
+
+          let progressBar = document.querySelector(".board .progress-data .completion-data .progress-bar");
+          let progressValue = Math.round(objCompletion) ?? 0;
+
+          progressBar.innerHTML = `${progressValue}% &nbsp; `;
+          progressBar.setAttribute("data-progress", progressValue);
+          progressBar.style.width = `${progressValue}%`;
         });
 
         let p = document.createElement("p");
@@ -162,7 +179,7 @@ function checkForTabs() {
   ) {
     appendTabsFrom(getFromStorage("projects-data"));
   } else {
-    let projectsData = [new Project("project 1", true, [])];
+    let projectsData = [new Project("new project", true, [])];
 
     localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
@@ -417,6 +434,10 @@ taskSects.forEach((sect) => {
     taskCont.append(dragging);
   });
 });
+
+window.addEventListener("dragend", (e) => {
+
+})
 
 //! remove task
 
