@@ -4,5 +4,8 @@
 [ x ] check why "project 1" precent doesnt update values
 
 [  ] add timer and count time for each project
+    (count hour by dividing seconds) 
+    (count minuts by dividing hours) 
+    (count seconds by dividing milliscond and minus hours and minutes)
 
 [  ] make sortable drag and drop tasks (add order property to tasks)

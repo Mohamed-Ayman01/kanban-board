@@ -69,11 +69,13 @@ function appendTasksFrom(activeProjectName) {
         taskBox.draggable = true;
         taskBox.setAttribute("data-value", task.value);
 
-        taskBox.addEventListener("dragstart", () => {
+        function onDragStart () {
           taskBox.classList.add("dragging");
-        });
+        }
 
-        taskBox.addEventListener("dragend", () => {
+        taskBox.addEventListener("dragstart", onDragStart);
+
+        function onDragEnd () {
           taskBox.classList.remove("dragging");
 
           calcCompletion(getFromStorage("projects-data"));
@@ -92,7 +94,9 @@ function appendTasksFrom(activeProjectName) {
           progressBar.innerHTML = `${progressValue}% &nbsp; `;
           progressBar.setAttribute("data-progress", progressValue);
           progressBar.style.width = `${progressValue}%`;
-        });
+        }
+
+        taskBox.addEventListener("dragend", onDragEnd);
 
         let p = document.createElement("p");
         p.textContent = task.value;
@@ -404,40 +408,39 @@ window.addEventListener("click", (e) => {
 
 let taskSects = document.querySelectorAll(".board .sect");
 
-taskSects.forEach((sect) => {
-  sect.addEventListener("dragover", (e) => {
-    e.preventDefault();
+function onDragOver(e) {
+  e.preventDefault();
 
-    let dragging = document.querySelector(".dragging");
-    let taskCont = sect.querySelector(".task-cont");
+  let dragging = document.querySelector(".dragging");
+  let taskCont = this.querySelector(".task-cont");
 
-    let projectsData = getFromStorage("projects-data");
+  let projectsData = getFromStorage("projects-data");
 
-    for (obj of projectsData) {
-      if (!obj.isActive) continue;
+  for (obj of projectsData) {
+    if (!obj.isActive) continue;
 
-      for (task of obj.tasks) {
-        if (task.value !== dragging.getAttribute("data-value")) continue;
+    for (task of obj.tasks) {
+      if (task.value !== dragging.getAttribute("data-value")) continue;
 
-        if (taskCont.id === "todo") {
-          task.status = 1;
-        } else if (taskCont.id === "in-progress") {
-          task.status = 2;
-        } else if (taskCont.id === "completed") {
-          task.status = 3;
-        }
+      if (taskCont.id === "todo") {
+        task.status = 1;
+      } else if (taskCont.id === "in-progress") {
+        task.status = 2;
+      } else if (taskCont.id === "completed") {
+        task.status = 3;
       }
     }
+  }
 
-    localStorage.setItem("projects-data", JSON.stringify(projectsData));
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
-    taskCont.append(dragging);
-  });
+  taskCont.append(dragging);
+}
+
+taskSects.forEach((sect) => {
+  sect.addEventListener("dragover", onDragOver);
 });
 
-window.addEventListener("dragend", (e) => {
-
-})
 
 //! remove task
 
@@ -571,3 +574,21 @@ menuBtn.addEventListener("click", () => {
   menuBtn.classList.toggle("show");
   sideBar.classList.toggle("show");
 });
+
+// ! Timer start and stop
+let timeBox = document.querySelector(".progress-data .timer-data .time");
+
+let startTimer = document.querySelector(".progress-data .timer-data .start");
+
+let workTimer;
+
+startTimer.addEventListener("click", () => {
+  workTimer = setInterval(() => {
+
+  }, 1000)
+})
+
+let stopTimer = document.querySelector(".progress-data .timer-data .stop");
+stopTimer.addEventListener("click", () => {
+  clearInterval(workTimer)
+})

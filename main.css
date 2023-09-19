@@ -333,10 +333,22 @@ aside .task-control button:hover::before {
   gap: 1rem;
 }
 
+@media (max-width: 600px) {
+  .board .progress-data {
+    flex-direction: column;
+  }
+}
+
 .board .progress-data .timer-data {
   display: flex;
   gap: 0.6rem;
   align-items: center;
+}
+
+@media (max-width: 600px) {
+  .board .progress-data .timer-data {
+    justify-content: center;
+  }
 }
 
 .board .progress-data .timer-data .time {
@@ -371,6 +383,12 @@ aside .task-control button:hover::before {
   justify-content: flex-end;
   align-items: center;
   transition: width .5s;
+}
+
+@media (max-width: 600px) {
+  .board .progress-data .completion-data .progress-bar {
+    padding: .2rem 0;
+  }
 }
 
 .board .sections {
