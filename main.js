@@ -3,11 +3,16 @@ class Project {
     this.name = name;
     this.isActive = isActive;
     this.tasks = tasks;
+    this.workTime = [0, 0, 0];
     this.completion = Math.round(
       (tasks.filter((el) => el.status == 3) * 100) / tasks.length,
     );
   }
 }
+
+let secCounter = 0;
+let minutesCounter = 0;
+let hoursCounter = 0;
 
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
@@ -17,7 +22,9 @@ function calcCompletion(projectsData) {
   for (obj of projectsData) {
     if (!obj.isActive) continue;
 
-    obj.completion = (obj.tasks.filter((el) => el.status == 3).length * 100) /obj.tasks.length;
+    obj.completion =
+      (obj.tasks.filter((el) => el.status == 3).length * 100) /
+      obj.tasks.length;
   }
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
@@ -46,21 +53,27 @@ function appendTasksFrom(activeProjectName) {
       inProgressCont.innerHTML = "";
       completedCont.innerHTML = "";
 
-      let progressBox = document.querySelector(".progress-data .completion-data");
+      let progressBox = document.querySelector(
+        ".progress-data .completion-data",
+      );
 
-      if (document.querySelector(".progress-data .completion-data .progress-bar")) {
-        document.querySelector(".progress-data .completion-data .progress-bar").remove();
+      if (
+        document.querySelector(".progress-data .completion-data .progress-bar")
+      ) {
+        document
+          .querySelector(".progress-data .completion-data .progress-bar")
+          .remove();
       }
 
       let progressBar = document.createElement("div");
       let progressValue = Math.round(obj.completion) ?? 0;
 
-      progressBar.classList.add("progress-bar")
+      progressBar.classList.add("progress-bar");
       progressBar.setAttribute("data-progress", progressValue);
       progressBar.innerHTML = `${progressValue}% &nbsp;`;
       progressBar.style.width = `${progressValue}%`;
 
-      progressBox.append(progressBar)
+      progressBox.append(progressBar);
 
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
@@ -69,13 +82,13 @@ function appendTasksFrom(activeProjectName) {
         taskBox.draggable = true;
         taskBox.setAttribute("data-value", task.value);
 
-        function onDragStart () {
+        function onDragStart() {
           taskBox.classList.add("dragging");
         }
 
         taskBox.addEventListener("dragstart", onDragStart);
 
-        function onDragEnd () {
+        function onDragEnd() {
           taskBox.classList.remove("dragging");
 
           calcCompletion(getFromStorage("projects-data"));
@@ -88,7 +101,9 @@ function appendTasksFrom(activeProjectName) {
             objCompletion = obj.completion;
           }
 
-          let progressBar = document.querySelector(".board .progress-data .completion-data .progress-bar");
+          let progressBar = document.querySelector(
+            ".board .progress-data .completion-data .progress-bar",
+          );
           let progressValue = Math.round(objCompletion) ?? 0;
 
           progressBar.innerHTML = `${progressValue}% &nbsp; `;
@@ -165,6 +180,22 @@ function appendTabsFrom(projectsArr) {
     proj.append(p, editBtn, removeBtn);
 
     projectsBox.append(proj);
+
+    if (project.isActive) {
+      let timeBox = document.querySelector(".progress-data .timer-data .time");
+
+      timeBox.textContent = `${
+        project.workTime[0] < 10 ? `0${project.workTime[0]}` : project.workTime[0]
+      }:${
+        project.workTime[1] < 10 ? `0${project.workTime[1]}` : project.workTime[1]
+      }:${
+        project.workTime[2] < 10 ? `0${project.workTime[2]}` : project.workTime[2]
+      }`;
+
+      secCounter = project.workTime[2];
+      minutesCounter = project.workTime[1];
+      hoursCounter = project.workTime[0];
+    }
   });
 
   let allProjects = document.querySelectorAll(".projects-box .proj");
@@ -258,6 +289,8 @@ window.addEventListener("click", (e) => {
   currentElParent.classList.add("active");
 
   let projectsData = getFromStorage("projects-data");
+  
+  saveTimerData(true);
 
   for (obj of projectsData) {
     if (obj.name === currentEl.textContent) {
@@ -269,7 +302,27 @@ window.addEventListener("click", (e) => {
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
+  let timeBox = document.querySelector(".progress-data .timer-data .time");
+
+  for (obj of projectsData) {
+    if (!obj.isActive) continue;
+
+    timeBox.textContent = `${
+      obj.workTime[0] < 10 ? `0${obj.workTime[0]}` : obj.workTime[0]
+    }:${
+      obj.workTime[1] < 10 ? `0${obj.workTime[1]}` : obj.workTime[1]
+    }:${
+      obj.workTime[2] < 10 ? `0${obj.workTime[2]}` : obj.workTime[2]
+    }`;
+
+    secCounter = obj.workTime[2];
+    minutesCounter = obj.workTime[1];
+    hoursCounter = obj.workTime[0];
+  }
+
+
   appendTasksFrom(currentElParent.getAttribute("data-name"));
+  
 });
 
 //! Add new task
@@ -441,7 +494,6 @@ taskSects.forEach((sect) => {
   sect.addEventListener("dragover", onDragOver);
 });
 
-
 //! remove task
 
 window.addEventListener("click", (e) => {
@@ -576,19 +628,59 @@ menuBtn.addEventListener("click", () => {
 });
 
 // ! Timer start and stop
+function saveTimerData(clearCounters) {
+  let projectsData = getFromStorage("projects-data");
+
+  for (obj of projectsData) {
+    if (!obj.isActive) continue;
+
+    obj.workTime = timeBox.textContent.split(":").map((el) => +el);
+    console.log(obj.workTime);
+  }
+
+  localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+  if (clearCounters) {
+    secCounter = 0;
+    minutesCounter = 0;
+    hoursCounter = 0;
+  }
+
+}
 let timeBox = document.querySelector(".progress-data .timer-data .time");
-
 let startTimer = document.querySelector(".progress-data .timer-data .start");
-
-let workTimer;
+let stopTimer = document.querySelector(".progress-data .timer-data .stop");
 
 startTimer.addEventListener("click", () => {
-  workTimer = setInterval(() => {
+  if (startTimer.classList.contains("active")) {
+    return;
+  } else {
+    timerInterval = setInterval(() => {
+      secCounter++;
+      if (secCounter === 60) {
+        secCounter = 0;
+        minutesCounter++;
+      }
 
-  }, 1000)
-})
+      if (minutesCounter === 60) {
+        minutesCounter = 0;
+        hoursCounter++;
+      }
 
-let stopTimer = document.querySelector(".progress-data .timer-data .stop");
+      timeBox.textContent = `${
+        hoursCounter < 10 ? `0${hoursCounter}` : hoursCounter
+      }:${minutesCounter < 10 ? `0${minutesCounter}` : minutesCounter}:${
+        secCounter < 10 ? `0${secCounter}` : secCounter
+      }`;
+    }, 1000);
+
+    startTimer.classList.add("active");
+  }
+});
+
 stopTimer.addEventListener("click", () => {
-  clearInterval(workTimer)
-})
+  clearInterval(timerInterval);
+  saveTimerData();
+
+  startTimer.classList.remove("active");
+});
