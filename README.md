@@ -15,4 +15,4 @@
 
 - timer for each project to count work time 
 
-- projects data saved is in browser local storage 
+- projects data is saved on the browser local storage 
