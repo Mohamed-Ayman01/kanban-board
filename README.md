@@ -3,12 +3,16 @@
 ### todo app as a kanban board
 
 #### features
-- different project tabs
+- create multiple project tabs
 
 - rename and remove projects
+
+- add tasks for eah project
 
 - drag and drop tasks
 
 - edit and remove tasks
 
-- data saved in browseer local storage 
+- timer for each project to count work time 
+
+- projects data saved is in browser local storage 
