@@ -449,7 +449,7 @@ aside .task-control button:hover::before {
   display: flex;
   background-color: var(--gray);
   overflow: hidden;
-  border-radius: 4px
+  border-radius: 2px;
 }
 
 .board .sect .task-cont .task.dragging {

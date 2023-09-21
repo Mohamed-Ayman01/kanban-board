@@ -14,6 +14,8 @@ let secCounter = 0;
 let minutesCounter = 0;
 let hoursCounter = 0;
 
+window.addEventListener("beforeunload", saveTimerData);
+
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
 
@@ -268,6 +270,8 @@ addProjectBtn.addEventListener("click", () => {
 
     localStorage.setItem("projects-data", JSON.stringify(projects));
 
+    saveTimerData();
+
     appendTabsFrom(getFromStorage("projects-data"));
   } else notifyWith("input field is empty");
 });
@@ -279,6 +283,8 @@ window.addEventListener("click", (e) => {
 
   if (currentEl.tagName === "BUTTON") return;
   if (!currentElParent.classList.contains("proj")) return;
+
+  if (startTimerBtn.classList.contains("active")) stopTimer()
 
   let allProjects = document.querySelectorAll(".projects-box .proj");
 
@@ -349,6 +355,7 @@ addTaskBtn.addEventListener("click", () => {
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
+  saveTimerData();
   appendTabsFrom(getFromStorage("projects-data"));
 });
 
@@ -384,6 +391,7 @@ window.addEventListener("click", (e) => {
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
+  saveTimerData();
   appendTabsFrom(getFromStorage("projects-data"));
 });
 
@@ -435,6 +443,7 @@ window.addEventListener("click", (e) => {
 
     localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
+    saveTimerData();
     appendTabsFrom(getFromStorage("projects-data"));
 
     this.parentNode.parentNode.remove();
@@ -648,11 +657,11 @@ function saveTimerData(clearCounters) {
 
 }
 let timeBox = document.querySelector(".progress-data .timer-data .time");
-let startTimer = document.querySelector(".progress-data .timer-data .start");
-let stopTimer = document.querySelector(".progress-data .timer-data .stop");
+let startTimerBtn = document.querySelector(".progress-data .timer-data .start");
+let stopTimerBtn = document.querySelector(".progress-data .timer-data .stop");
 
-startTimer.addEventListener("click", () => {
-  if (startTimer.classList.contains("active")) {
+startTimerBtn.addEventListener("click", () => {
+  if (startTimerBtn.classList.contains("active")) {
     return;
   } else {
     timerInterval = setInterval(() => {
@@ -674,13 +683,16 @@ startTimer.addEventListener("click", () => {
       }`;
     }, 1000);
 
-    startTimer.classList.add("active");
+    startTimerBtn.classList.add("active");
   }
 });
 
-stopTimer.addEventListener("click", () => {
+function stopTimer() {
   clearInterval(timerInterval);
+
   saveTimerData();
 
-  startTimer.classList.remove("active");
-});
+  startTimerBtn.classList.remove("active");
+}
+
+stopTimerBtn.addEventListener("click", stopTimer);
