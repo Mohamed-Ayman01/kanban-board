@@ -12,13 +12,13 @@ body {
   font-family: 'Work Sans', sans-serif;
 }
 
-::-webkit-scrollbar {
-  background-color: var(--green-100);
+/* ::-webkit-scrollbar {
+  background-color: var(--green-300);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--green-200);
-}
+  background-color: var(--orange-100);
+} */
 
 :root {
   --green-100: #ccdbdc;
@@ -127,7 +127,7 @@ aside.show {
 @media (max-width: 768px) {
   aside {
     transform: translateX(-100%);
-    position: absolute;
+    position: fixed;
     height: 100%;
     z-index: 10;
   }
@@ -322,6 +322,7 @@ aside .task-control button:hover::before {
   gap: 1rem;
   background-color: var(--gray);
   position: relative;
+  height: 100vh;
 }
 
 .board .progress-data {
@@ -396,6 +397,7 @@ aside .task-control button:hover::before {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  overflow-y: auto;
 }
 
 @media (max-width: 992px) {
@@ -462,7 +464,7 @@ aside .task-control button:hover::before {
 
 .board .sect .task-cont .task p {
   flex: 1;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .board .sect .task-cont .task button {

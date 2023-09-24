@@ -1,7 +1,0 @@
-[x] add timer and count time for each project
-    on projects load append timer value
-    on stop save timer value
-    on project toggle save timer value
-    on project toggle append timer value
-
-[] make sortable drag and drop tasks (add order property to tasks)
