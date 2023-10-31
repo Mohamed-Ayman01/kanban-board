@@ -30,6 +30,8 @@ body {
   --orange-200: #ff5e00;
 
   --gray: #efefef;
+
+  --border-radius: 4px;
 }
 
 .pop-up {
@@ -179,7 +181,10 @@ aside .projects-control .controls input {
   padding: .5rem;
   background-color: var(--green-300);
   flex: 1;
-  border: 1px solid var(--green-200)
+  border: 1px solid var(--green-200);
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  font-size: 1rem;
+  caret-color: var(--green-200);
 }
 
 aside .projects-control .controls input::placeholder {
@@ -192,9 +197,11 @@ aside .projects-control .controls button {
   padding: .75rem;
   font-size: 1.2rem;
   transition: color .3s;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
-aside .projects-control .controls button:hover {
+aside .projects-control .controls button:hover,
+aside .projects-control .controls button:focus {
   color: var(--gray);
 }
 
@@ -214,6 +221,13 @@ aside .projects-control .projects-box .proj {
   background-color: var(--green-300);
   overflow: hidden;
   cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: .3s;
+  transition-property: opacity;
+}
+
+aside .projects-control .projects-box .proj:not(.active):hover {
+  opacity: .8;
 }
 
 aside .projects-control .projects-box .proj.active {
@@ -273,6 +287,7 @@ aside .task-control textarea {
   border: 1px solid var(--green-200);
   color: white;
   transition: background-color 200ms;
+  border-radius: var(--border-radius);
 }
 
 aside .task-control textarea:focus {
@@ -289,6 +304,7 @@ aside .task-control button {
   overflow: hidden;
   z-index: 10;
   transition: color .5s;
+  border-radius: var(--border-radius);
 }
 
 aside .task-control button:hover {
@@ -327,11 +343,11 @@ aside .task-control button:hover::before {
 
 .board .progress-data {
   padding: 1rem;
-  border-radius: 6px;
   background-color: var(--green-300);
   color: white;
   display: flex;
   gap: 1rem;
+  border-radius: var(--border-radius);
 }
 
 @media (max-width: 600px) {
@@ -410,8 +426,8 @@ aside .task-control button:hover::before {
 .board .sections .sect {
   background-color: var(--green-100);
   overflow: hidden;
-  border-radius: 6px;
   overflow-y: auto;
+  border-radius: var(--border-radius);
 }
 
 .board .sect .title {
@@ -451,7 +467,7 @@ aside .task-control button:hover::before {
   display: flex;
   background-color: var(--gray);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--border-radius);
 }
 
 .board .sect .task-cont .task.dragging {
