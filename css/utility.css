@@ -1,6 +1,7 @@
 .primary-btn {
   padding: .5rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
   background-color: transparent;
   color: var(--green-200);
   border: 1px solid var(--green-200);

@@ -172,8 +172,8 @@ aside .menu:hover {
 }
 
 aside .projects-control {
-  flex-basis: 70%;
-  max-height: 70%;
+  flex-basis: 55%;
+  max-height: 55%;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -281,12 +281,16 @@ aside .task-control {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: .75rem;
 }
 
+aside .task-control label {
+  color: white;
+  text-transform: capitalize;
+}
+
+aside .task-control #task-name-input,
 aside .task-control textarea {
-  flex: 1;
-  resize: none;
   padding: .5rem;
   background-color: transparent;
   border: 1px solid var(--green-200);
@@ -295,8 +299,24 @@ aside .task-control textarea {
   border-radius: var(--border-radius);
 }
 
+aside .task-control #task-name-input:focus,
 aside .task-control textarea:focus {
   background-color: var(--green-400);
+}
+
+aside .task-control textarea {
+  resize: none;
+  flex: 1;
+}
+
+aside .task-control .remove-all-tasks {
+  background-color: var(--orange-100);
+  color: white;
+  transition: .3s;
+}
+
+aside .task-control .remove-all-tasks:hover {
+  background-color: var(--orange-200);
 }
 
 .board {

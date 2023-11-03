@@ -82,7 +82,9 @@ function appendTasksFrom(activeProjectName) {
         taskBox.classList.add("task");
 
         taskBox.draggable = true;
-        taskBox.setAttribute("data-value", task.value);
+        taskBox.setAttribute("data-name", task.name);
+        taskBox.setAttribute("data-description", task.description);
+        taskBox.setAttribute("data-date", task.date);
 
         function onDragStart() {
           taskBox.classList.add("dragging");
@@ -116,7 +118,7 @@ function appendTasksFrom(activeProjectName) {
         taskBox.addEventListener("dragend", onDragEnd);
 
         let p = document.createElement("p");
-        p.textContent = task.value;
+        p.textContent = task.name;
 
         let editBtn = document.createElement("button");
         editBtn.classList.add("edit-task");
@@ -332,24 +334,29 @@ window.addEventListener("click", (e) => {
 });
 
 //! Add new task
-let taskTextArea = document.querySelector("aside .task-control textarea");
+let taskNameInput = document.querySelector("aside .task-control #task-name-input");
+let taskDescInput = document.querySelector("aside .task-control textarea");
 let addTaskBtn = document.querySelector("aside .task-control .add-task");
 
 addTaskBtn.addEventListener("click", () => {
-  let taskValue = taskTextArea.value;
-  if (taskValue === "") return notifyWith("input field is empty");
-  taskTextArea.value = "";
+  let taskName = taskNameInput.value;
+  let taskDesc = taskDescInput.value;
+
+  if (taskName === "") return notifyWith("enter the task name");
+  if (taskDesc === "") return notifyWith("enter the task description");
+  taskNameInput.value = "";
+  taskDescInput.value = "";
 
   let projectsData = getFromStorage("projects-data");
 
   for (object of projectsData) {
     if (object.isActive) {
       for (task of object.tasks) {
-        if (task.value === taskValue)
+        if (task.name === taskName)
           return notifyWith("this task already exsist");
       }
 
-      object.tasks.push({ value: taskValue, status: 1 });
+      object.tasks.push({ name: taskName, description: taskDesc, status: 1, date: new Date() });
     }
   }
 
@@ -506,11 +513,11 @@ taskSects.forEach((sect) => {
 //! remove task
 
 window.addEventListener("click", (e) => {
-  let taskValue;
+  let taskName;
   if (e.target.classList.contains("remove-task")) {
-    taskValue = e.target.parentNode.getAttribute("data-value");
+    taskName = e.target.parentNode.getAttribute("data-name");
   } else if (e.target.parentNode.classList.contains("remove-task")) {
-    taskValue = e.target.parentNode.parentNode.getAttribute("data-value");
+    taskName = e.target.parentNode.parentNode.getAttribute("data-name");
   } else return;
 
   let projectsData = getFromStorage("projects-data");
@@ -520,7 +527,7 @@ window.addEventListener("click", (e) => {
     if (!obj.isActive) continue;
 
     for (task of obj.tasks) {
-      if (task.value != taskValue) {
+      if (task.name != taskName) {
         newActiveProjectTasks.push(task);
       }
     }
@@ -540,13 +547,13 @@ window.addEventListener("click", (e) => {
 });
 
 //! edit task
-
+// ! +++++++++++++++++++++ MAKE IT TO EDIT NAME AND DESCRIPTION
 window.addEventListener("click", (e) => {
-  let taskValue;
+  let taskName;
   if (e.target.classList.contains("edit-task")) {
-    taskValue = e.target.parentNode.getAttribute("data-value");
+    taskName = e.target.parentNode.getAttribute("data-value");
   } else if (e.target.parentNode.classList.contains("edit-task")) {
-    taskValue = e.target.parentNode.parentNode.getAttribute("data-value");
+    taskName = e.target.parentNode.parentNode.getAttribute("data-value");
   } else return;
 
   // ! Make function to create modal
@@ -560,7 +567,8 @@ window.addEventListener("click", (e) => {
   layover.classList.add("input-modal-layover");
 
   let input = document.createElement("input");
-  input.setAttribute("data-value", taskValue);
+  input.setAttribute("data-value", taskName);
+  input.value = taskName;
   input.placeholder = "new name";
 
   let confirmBtn = document.createElement("button");
@@ -579,14 +587,14 @@ window.addEventListener("click", (e) => {
       if (!obj.isActive) continue;
 
       for (task of obj.tasks) {
-        if (task.value === newName)
-          return notifyWith("this task already exsist");
+        if (task.name === newName)
+          return notifyWith("this task already exsists");
       }
 
       for (task of obj.tasks) {
-        if (task.value != taskValue) continue;
+        if (task.name != taskName) continue;
 
-        task.value = newName;
+        task.name = newName;
       }
     }
 
