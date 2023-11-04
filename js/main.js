@@ -36,6 +36,27 @@ function getFromStorage(item) {
   return JSON.parse(localStorage.getItem(item));
 }
 
+function clearActiveProjectBoard() {
+  let projects = getFromStorage("projects-data");
+
+  for (project of projects) {
+    if (!project.isActive) continue;
+
+    project.tasks = [];
+  }
+
+  localStorage.setItem("projects-data", JSON.stringify(projects));
+
+  for (project of projects) {
+    if (!project.isActive) continue;
+
+    appendTasksFrom(project.name);
+  }
+
+  document.querySelector(".confirm-modal").remove();
+  document.querySelector(".confirm-modal-overlay").remove();
+}
+
 function appendTasksFrom(activeProjectName) {
   calcCompletion(getFromStorage("projects-data"));
 
@@ -189,11 +210,17 @@ function appendTabsFrom(projectsArr) {
       let timeBox = document.querySelector(".progress-data .timer-data .time");
 
       timeBox.textContent = `${
-        project.workTime[0] < 10 ? `0${project.workTime[0]}` : project.workTime[0]
+        project.workTime[0] < 10
+          ? `0${project.workTime[0]}`
+          : project.workTime[0]
       }:${
-        project.workTime[1] < 10 ? `0${project.workTime[1]}` : project.workTime[1]
+        project.workTime[1] < 10
+          ? `0${project.workTime[1]}`
+          : project.workTime[1]
       }:${
-        project.workTime[2] < 10 ? `0${project.workTime[2]}` : project.workTime[2]
+        project.workTime[2] < 10
+          ? `0${project.workTime[2]}`
+          : project.workTime[2]
       }`;
 
       secCounter = project.workTime[2];
@@ -286,7 +313,7 @@ window.addEventListener("click", (e) => {
   if (currentEl.tagName === "BUTTON") return;
   if (!currentElParent.classList.contains("proj")) return;
 
-  if (startTimerBtn.classList.contains("active")) stopTimer()
+  if (startTimerBtn.classList.contains("active")) stopTimer();
 
   let allProjects = document.querySelectorAll(".projects-box .proj");
 
@@ -297,7 +324,7 @@ window.addEventListener("click", (e) => {
   currentElParent.classList.add("active");
 
   let projectsData = getFromStorage("projects-data");
-  
+
   saveTimerData(true);
 
   for (obj of projectsData) {
@@ -317,9 +344,7 @@ window.addEventListener("click", (e) => {
 
     timeBox.textContent = `${
       obj.workTime[0] < 10 ? `0${obj.workTime[0]}` : obj.workTime[0]
-    }:${
-      obj.workTime[1] < 10 ? `0${obj.workTime[1]}` : obj.workTime[1]
-    }:${
+    }:${obj.workTime[1] < 10 ? `0${obj.workTime[1]}` : obj.workTime[1]}:${
       obj.workTime[2] < 10 ? `0${obj.workTime[2]}` : obj.workTime[2]
     }`;
 
@@ -328,13 +353,13 @@ window.addEventListener("click", (e) => {
     hoursCounter = obj.workTime[0];
   }
 
-
   appendTasksFrom(currentElParent.getAttribute("data-name"));
-  
 });
 
 //! Add new task
-let taskNameInput = document.querySelector("aside .task-control #task-name-input");
+let taskNameInput = document.querySelector(
+  "aside .task-control #task-name-input",
+);
 let taskDescInput = document.querySelector("aside .task-control textarea");
 let addTaskBtn = document.querySelector("aside .task-control .add-task");
 
@@ -356,7 +381,12 @@ addTaskBtn.addEventListener("click", () => {
           return notifyWith("this task already exsist");
       }
 
-      object.tasks.push({ name: taskName, description: taskDesc, status: 1, date: new Date() });
+      object.tasks.push({
+        name: taskName,
+        description: taskDesc,
+        status: 1,
+        date: new Date(),
+      });
     }
   }
 
@@ -489,7 +519,7 @@ function onDragOver(e) {
     if (!obj.isActive) continue;
 
     for (task of obj.tasks) {
-      if (task.value !== dragging.getAttribute("data-value")) continue;
+      if (task.name !== dragging.getAttribute("data-name")) continue;
 
       if (taskCont.id === "todo") {
         task.status = 1;
@@ -628,6 +658,45 @@ window.addEventListener("click", (e) => {
   input.focus();
 });
 
+// ! (clear board)
+
+let clearBoardBtn = document.querySelector("aside .task-control .clear-board");
+
+clearBoardBtn.addEventListener("click", function () {
+  let confirmModal = document.createElement("div");
+  confirmModal.classList.add("confirm-modal");
+
+  confirmModal.innerHTML = `
+  <p>are you sure you wan't to clear the board?</p>
+  <div class="row">
+    <button class="yes">yes</button>
+    <button class="no">no</button>
+  </div>
+  `;
+
+  let confirmModalOverlay = document.createElement("div");
+  confirmModalOverlay.classList.add("confirm-modal-overlay");
+
+  document.body.append(confirmModal, confirmModalOverlay);
+});
+
+document.addEventListener("click", function (e) {
+  if (
+    e.target.classList.contains("yes") &&
+    document.querySelector(".confirm-modal") !== null
+  ) clearActiveProjectBoard();
+});
+
+document.addEventListener("click", function (e) {
+  if (
+    e.target.classList.contains("no") &&
+    document.querySelector(".confirm-modal") !== null
+  ) {
+    document.querySelector(".confirm-modal").remove();
+    document.querySelector(".confirm-modal-overlay").remove();
+  }
+});
+
 // ! menu on phone
 
 let menuBtn = document.querySelector("aside .menu");
@@ -662,7 +731,6 @@ function saveTimerData(clearCounters) {
     minutesCounter = 0;
     hoursCounter = 0;
   }
-
 }
 let timeBox = document.querySelector(".progress-data .timer-data .time");
 let startTimerBtn = document.querySelector(".progress-data .timer-data .start");

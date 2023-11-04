@@ -17,7 +17,7 @@
   <script src="js/main.js" defer></script>
 </head>
 <body>
-
+  <!-- -------- ASIDE -->
   <aside>
     <button class="menu"><i class="fas fa-bars"></i></button>
     <div class="projects-control">
@@ -25,21 +25,21 @@
         <input type="text" id="proj-input" placeholder="project name">
         <button class="secondary-btn"><i class="fas fa-folder-plus"></i></button>
       </div>
-
       <div class="projects-box">
         
       </div>
     </div>
-
     <div class="task-control">
-      <label for="task-name-input">task name</label>
-      <input type="text" id="task-name-input">
-      <label for="task-desc-input">task description</label>
-      <textarea id="task-desc-input"></textarea>
-      <button class="add-task primary-btn">add new task</button>
-      <button class="remove-all-tasks secondary-btn"><i class="fas fa-trash-can"></i> remove all tasks</button>
+        <label for="task-name-input">task name</label>
+        <input type="text" id="task-name-input">
+        <label for="task-desc-input">task description</label>
+        <textarea id="task-desc-input"></textarea>
+        <button class="add-task primary-btn">add new task</button>
+        <button class="clear-board secondary-btn"><i class="fas fa-trash-can"></i> clear board</button>
     </div>
   </aside>
+
+  <!-- -------- BOARD -->
 
   <div class="board">
     <div class="progress-data">
@@ -81,6 +81,5 @@
     </div>
 
   </div>
-
 </body>
 </html>
