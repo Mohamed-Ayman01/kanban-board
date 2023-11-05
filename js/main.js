@@ -104,8 +104,6 @@ function appendTasksFrom(activeProjectName) {
 
         taskBox.draggable = true;
         taskBox.setAttribute("data-name", task.name);
-        taskBox.setAttribute("data-description", task.description);
-        taskBox.setAttribute("data-date", task.date);
 
         function onDragStart() {
           taskBox.classList.add("dragging");
@@ -141,6 +139,10 @@ function appendTasksFrom(activeProjectName) {
         let p = document.createElement("p");
         p.textContent = task.name;
 
+        p.addEventListener("click", () => {
+          taskBox.querySelector(".task-modal").classList.toggle("show")
+        })
+
         let editBtn = document.createElement("button");
         editBtn.classList.add("edit-task");
 
@@ -159,7 +161,17 @@ function appendTasksFrom(activeProjectName) {
 
         removeBtn.append(removeBtnIco);
 
-        taskBox.append(p, editBtn, removeBtn);
+        let taskModal = document.createElement("div");
+        taskModal.classList.add("task-modal");
+
+        taskModal.innerHTML = `
+        <h2>created at:</h2>
+        <div class="date">${task.date.split("T")[0]}</div>
+        <h2>description:</h2>
+        <div class="description">${task.description}</div>
+        `
+
+        taskBox.append(p, editBtn, removeBtn, taskModal);
 
         if (task.status === 1) {
           todoCont.append(taskBox);

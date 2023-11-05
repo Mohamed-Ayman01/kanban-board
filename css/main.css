@@ -246,7 +246,7 @@ aside .projects-control .controls input {
 }
 
 aside .projects-control .controls input::placeholder {
-  color: rgb(183, 183, 183);
+  color: #b6b6b67c;
 }
 
 aside .projects-control .controls input:focus {
@@ -333,11 +333,6 @@ aside .task-control {
   gap: .75rem;
 }
 
-aside .task-control label {
-  color: white;
-  text-transform: capitalize;
-}
-
 aside .task-control #task-name-input,
 aside .task-control textarea {
   padding: .5rem;
@@ -346,6 +341,11 @@ aside .task-control textarea {
   color: white;
   transition: background-color 200ms;
   border-radius: var(--border-radius);
+}
+
+aside .task-control #task-name-input::placeholder,
+aside .task-control textarea::placeholder {
+  color: #b6b6b67c;
 }
 
 aside .task-control #task-name-input:focus,
@@ -362,7 +362,6 @@ aside .task-control .clear-board {
   background-color: var(--orange-100);
   color: white;
   transition: .3s;
-  font-weight: bold;
 }
 
 aside .task-control .clear-board:hover {
@@ -506,9 +505,9 @@ aside .task-control .clear-board:hover {
 
 .board .sect .task-cont .task {
   display: flex;
-  background-color: var(--green-300);
-  overflow: hidden;
-  border-radius: var(--border-radius);
+  flex-wrap: wrap;
+  position: relative;
+  cursor: pointer;
 }
 
 .board .sect .task-cont .task.dragging {
@@ -520,9 +519,11 @@ aside .task-control .clear-board:hover {
 }
 
 .board .sect .task-cont .task p {
-  color: white;
   flex: 1;
   word-break: break-word;
+  background-color: var(--green-300);
+  color: white;
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
 }
 
 .board .sect .task-cont .task button {
@@ -538,10 +539,44 @@ aside .task-control .clear-board:hover {
 }
 
 .board .sect .task-cont .task .remove-task {
-  /* color: white; */
   background-color: var(--orange-100);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
 .board .sect .task-cont .task .remove-task:hover {
   background-color: var(--orange-200);
+}
+
+.board .sect .task-cont .task .task-modal {
+  margin-top: 0;
+  height: 0;
+  padding: 0 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: white;
+  background-color: var(--green-300);
+  border-radius: var(--border-radius);
+  transition: all .3s;
+  opacity: 0;
+  word-break: break-all;
+  overflow: hidden;
+  border: 1px solid var(--green-500);
+}
+
+
+.board .sect .task-cont .task .task-modal.show {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  height: fit-content;
+  opacity: 1;
+}
+
+.board .sect .task-cont .task .task-modal .splitter {
+  width: 100%;
+  height: 5px;
+  background-color: var(--green-400);
+  border-radius: 20px;
 }
