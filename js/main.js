@@ -140,8 +140,8 @@ function appendTasksFrom(activeProjectName) {
         p.textContent = task.name;
 
         p.addEventListener("click", () => {
-          taskBox.querySelector(".task-modal").classList.toggle("show")
-        })
+          taskBox.querySelector(".task-modal").classList.toggle("show");
+        });
 
         let editBtn = document.createElement("button");
         editBtn.classList.add("edit-task");
@@ -151,7 +151,80 @@ function appendTasksFrom(activeProjectName) {
 
         editBtn.append(buttonIco);
 
-        taskBox.append(p, editBtn);
+        editBtn.addEventListener("click", () => {
+          let taskName = taskBox.getAttribute("data-name");
+
+          // ! Make function to create modal
+          let container = document.createElement("div");
+          container.classList.add("container");
+
+          let inputModal = document.createElement("div");
+          inputModal.classList.add("input-modal");
+
+          let layover = document.createElement("div");
+          layover.classList.add("input-modal-layover");
+
+          let input = document.createElement("input");
+          input.setAttribute("data-value", taskName);
+          input.value = taskName;
+          input.placeholder = "new name";
+
+          let confirmBtn = document.createElement("button");
+          confirmBtn.classList.add("confirm-btn");
+          confirmBtn.textContent = `confirm`;
+
+          confirmBtn.addEventListener("click", function () {
+            let input = this.parentNode.querySelector("input");
+            let newName = input.value;
+
+            if (newName === "") return notifyWith("input field is empty");
+
+            let projectsData = getFromStorage("projects-data");
+
+            for (obj of projectsData) {
+              if (!obj.isActive) continue;
+
+              for (task of obj.tasks) {
+                if (task.name === newName)
+                  return notifyWith("this task already exsists");
+              }
+
+              for (task of obj.tasks) {
+                if (task.name != taskName) continue;
+
+                task.name = newName;
+              }
+            }
+
+            localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+            let projects = document.querySelectorAll(".projects-box .proj");
+
+            projects.forEach((proj) => {
+              if (!proj.classList.contains("active")) return;
+
+              appendTasksFrom(proj.getAttribute("data-name"));
+            });
+
+            this.parentNode.parentNode.remove();
+          });
+
+          let exitBtn = document.createElement("button");
+          exitBtn.classList.add("exit-btn");
+          exitBtn.innerHTML = `x`;
+
+          exitBtn.addEventListener("click", function () {
+            this.parentNode.parentNode.remove();
+          });
+
+          inputModal.append(input, confirmBtn, exitBtn);
+
+          container.append(layover, inputModal);
+
+          document.body.append(container);
+
+          input.focus();
+        });
 
         let removeBtn = document.createElement("button");
         removeBtn.classList.add("remove-task");
@@ -161,6 +234,35 @@ function appendTasksFrom(activeProjectName) {
 
         removeBtn.append(removeBtnIco);
 
+        removeBtn.addEventListener("click", () => {
+          let taskName = taskBox.getAttribute("data-name");
+
+          let projectsData = getFromStorage("projects-data");
+          let newActiveProjectTasks = [];
+
+          for (obj of projectsData) {
+            if (!obj.isActive) continue;
+
+            for (task of obj.tasks) {
+              if (task.name != taskName) {
+                newActiveProjectTasks.push(task);
+              }
+            }
+
+            obj.tasks = newActiveProjectTasks;
+          }
+
+          localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+          let projects = document.querySelectorAll(".projects-box .proj");
+
+          projects.forEach((proj) => {
+            if (!proj.classList.contains("active")) return;
+
+            appendTasksFrom(proj.getAttribute("data-name"));
+          });
+        });
+
         let taskModal = document.createElement("div");
         taskModal.classList.add("task-modal");
 
@@ -169,7 +271,7 @@ function appendTasksFrom(activeProjectName) {
         <div class="date">${task.date.split("T")[0]}</div>
         <h2>description:</h2>
         <div class="description">${task.description}</div>
-        `
+        `;
 
         taskBox.append(p, editBtn, removeBtn, taskModal);
 
@@ -193,9 +295,9 @@ function appendTabsFrom(projectsArr) {
 
   projectsArr.forEach((project) => {
     let proj = document.createElement("div");
-    project.isActive ? proj.classList.add("active") : "";
     proj.classList.add("proj");
     proj.setAttribute("data-name", project.name);
+    project.isActive ? proj.classList.add("active") : "";
 
     let p = document.createElement("p");
     p.textContent = project.name;
@@ -203,12 +305,111 @@ function appendTabsFrom(projectsArr) {
     let editBtn = document.createElement("button");
     editBtn.classList.add("edit-tab");
 
+    editBtn.addEventListener("click", () => {
+      let projectName = proj.getAttribute("data-name");
+
+      let container = document.createElement("div");
+      container.classList.add("container");
+
+      let inputModal = document.createElement("div");
+      inputModal.classList.add("input-modal");
+
+      let layover = document.createElement("div");
+      layover.classList.add("input-modal-layover");
+
+      let input = document.createElement("input");
+      input.setAttribute("data-name", projectName);
+      input.value = projectName;
+      input.placeholder = "new name";
+
+      let confirmBtn = document.createElement("button");
+      confirmBtn.classList.add("confirm-btn");
+      confirmBtn.textContent = `confirm`;
+
+      confirmBtn.addEventListener("click", function () {
+        let newName = this.parentNode.querySelector("input").value;
+
+        if (newName === "") return notifyWith("input field is empty");
+
+        let projectsData = getFromStorage("projects-data");
+
+        for (obj of projectsData) {
+          if (obj.name === newName)
+            return notifyWith("this project name already used");
+        }
+
+        for (obj of projectsData) {
+          if (obj.name === input.getAttribute("data-name")) {
+            obj.name = newName;
+          }
+        }
+
+        localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+        saveTimerData();
+        appendTabsFrom(getFromStorage("projects-data"));
+
+        this.parentNode.parentNode.remove();
+      });
+
+      let exitBtn = document.createElement("button");
+      exitBtn.classList.add("exit-btn");
+      exitBtn.innerHTML = `x`;
+
+      exitBtn.addEventListener("click", function () {
+        this.parentNode.parentNode.remove();
+      });
+
+      inputModal.append(input, confirmBtn, exitBtn);
+
+      container.append(layover, inputModal);
+
+      document.body.append(container);
+
+      input.focus();
+    });
+
     let editBtnIco = document.createElement("i");
     editBtnIco.classList.add("fas", "fa-pen-to-square");
     editBtn.append(editBtnIco);
 
     let removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-tab");
+
+    removeBtn.addEventListener("click", () => {
+      let projectName = proj.getAttribute("data-name");
+
+      let projectsData = getFromStorage("projects-data");
+
+      for (obj of projectsData) {
+        if (obj.name !== projectName && !obj.isActive) continue;
+
+        let todoCont = document.querySelector(".board .todo-sect .task-cont");
+        todoCont.innerHTML = "";
+
+        let inProgressCont = document.querySelector(
+          ".board .in-progress-sect .task-cont",
+        );
+        inProgressCont.innerHTML = "";
+
+        let completedCont = document.querySelector(
+          ".board .completed-sect .task-cont",
+        );
+        completedCont.innerHTML = "";
+
+        let timeBox = document.querySelector(
+          ".board .progress-data .timer-data .time",
+        );
+        timeBox.textContent = "00:00:00";
+      }
+
+      projectsData = projectsData.filter((obj) => obj.name !== projectName);
+
+      localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+      saveTimerData();
+      appendTabsFrom(getFromStorage("projects-data"));
+    });
 
     let removeBtnIco = document.createElement("i");
     removeBtnIco.classList.add("fas", "fa-trash-can");
@@ -408,113 +609,6 @@ addTaskBtn.addEventListener("click", () => {
   appendTabsFrom(getFromStorage("projects-data"));
 });
 
-//! remove project
-
-window.addEventListener("click", (e) => {
-  let projectName;
-  if (e.target.classList.contains("remove-tab")) {
-    projectName = e.target.parentNode.getAttribute("data-name");
-  } else if (e.target.parentNode.classList.contains("remove-tab")) {
-    projectName = e.target.parentNode.parentNode.getAttribute("data-name");
-  } else return;
-
-  let projectsData = getFromStorage("projects-data");
-
-  for (obj of projectsData) {
-    if (obj.name === projectName && obj.isActive) {
-      let todoCont = document.querySelector(".board .todo-sect .task-cont");
-      let inProgressCont = document.querySelector(
-        ".board .in-progress-sect .task-cont",
-      );
-      let completedCont = document.querySelector(
-        ".board .completed-sect .task-cont",
-      );
-
-      todoCont.innerHTML = "";
-      inProgressCont.innerHTML = "";
-      completedCont.innerHTML = "";
-    }
-  }
-
-  projectsData = projectsData.filter((obj) => obj.name !== projectName);
-
-  localStorage.setItem("projects-data", JSON.stringify(projectsData));
-
-  saveTimerData();
-  appendTabsFrom(getFromStorage("projects-data"));
-});
-
-//! edit project
-
-window.addEventListener("click", (e) => {
-  let projectName;
-  if (e.target.classList.contains("edit-tab")) {
-    projectName = e.target.parentNode.getAttribute("data-name");
-  } else if (e.target.parentNode.classList.contains("edit-tab")) {
-    projectName = e.target.parentNode.parentNode.getAttribute("data-name");
-  } else return;
-
-  let container = document.createElement("div");
-  container.classList.add("container");
-
-  let inputModal = document.createElement("div");
-  inputModal.classList.add("input-modal");
-
-  let layover = document.createElement("div");
-  layover.classList.add("input-modal-layover");
-
-  let input = document.createElement("input");
-  input.setAttribute("data-name", projectName);
-  input.placeholder = "new name";
-
-  let confirmBtn = document.createElement("button");
-  confirmBtn.classList.add("confirm-btn");
-  confirmBtn.textContent = `confirm`;
-
-  confirmBtn.addEventListener("click", function () {
-    let input = this.parentNode.querySelector("input");
-    let newName = input.value;
-
-    if (newName === "") return notifyWith("input field is empty");
-
-    let projectsData = getFromStorage("projects-data");
-
-    for (obj of projectsData) {
-      if (obj.name === newName)
-        return notifyWith("this project name already used");
-    }
-
-    for (obj of projectsData) {
-      if (obj.name === input.getAttribute("data-name")) {
-        obj.name = newName;
-      }
-    }
-
-    localStorage.setItem("projects-data", JSON.stringify(projectsData));
-
-    saveTimerData();
-    appendTabsFrom(getFromStorage("projects-data"));
-
-    this.parentNode.parentNode.remove();
-  });
-
-  let exitBtn = document.createElement("button");
-  exitBtn.classList.add("exit-btn");
-  exitBtn.innerHTML = `x`;
-
-  exitBtn.addEventListener("click", function () {
-    this.parentNode.parentNode.remove();
-  });
-
-  inputModal.append(input, confirmBtn, exitBtn);
-
-  container.append(layover, inputModal);
-
-  document.body.append(container);
-
-  input.focus();
-});
-
 //! Drag and drop tasks
 
 let taskSects = document.querySelectorAll(".board .sect");
@@ -552,124 +646,6 @@ taskSects.forEach((sect) => {
   sect.addEventListener("dragover", onDragOver);
 });
 
-//! remove task
-
-window.addEventListener("click", (e) => {
-  let taskName;
-  if (e.target.classList.contains("remove-task")) {
-    taskName = e.target.parentNode.getAttribute("data-name");
-  } else if (e.target.parentNode.classList.contains("remove-task")) {
-    taskName = e.target.parentNode.parentNode.getAttribute("data-name");
-  } else return;
-
-  let projectsData = getFromStorage("projects-data");
-  let newActiveProjectTasks = [];
-
-  for (obj of projectsData) {
-    if (!obj.isActive) continue;
-
-    for (task of obj.tasks) {
-      if (task.name != taskName) {
-        newActiveProjectTasks.push(task);
-      }
-    }
-
-    obj.tasks = newActiveProjectTasks;
-  }
-
-  localStorage.setItem("projects-data", JSON.stringify(projectsData));
-
-  let projects = document.querySelectorAll(".projects-box .proj");
-
-  projects.forEach((proj) => {
-    if (!proj.classList.contains("active")) return;
-
-    appendTasksFrom(proj.getAttribute("data-name"));
-  });
-});
-
-//! edit task
-// ! +++++++++++++++++++++ MAKE IT TO EDIT NAME AND DESCRIPTION
-window.addEventListener("click", (e) => {
-  let taskName;
-  if (e.target.classList.contains("edit-task")) {
-    taskName = e.target.parentNode.getAttribute("data-value");
-  } else if (e.target.parentNode.classList.contains("edit-task")) {
-    taskName = e.target.parentNode.parentNode.getAttribute("data-value");
-  } else return;
-
-  // ! Make function to create modal
-  let container = document.createElement("div");
-  container.classList.add("container");
-
-  let inputModal = document.createElement("div");
-  inputModal.classList.add("input-modal");
-
-  let layover = document.createElement("div");
-  layover.classList.add("input-modal-layover");
-
-  let input = document.createElement("input");
-  input.setAttribute("data-value", taskName);
-  input.value = taskName;
-  input.placeholder = "new name";
-
-  let confirmBtn = document.createElement("button");
-  confirmBtn.classList.add("confirm-btn");
-  confirmBtn.textContent = `confirm`;
-
-  confirmBtn.addEventListener("click", function () {
-    let input = this.parentNode.querySelector("input");
-    let newName = input.value;
-
-    if (newName === "") return notifyWith("input field is empty");
-
-    let projectsData = getFromStorage("projects-data");
-
-    for (obj of projectsData) {
-      if (!obj.isActive) continue;
-
-      for (task of obj.tasks) {
-        if (task.name === newName)
-          return notifyWith("this task already exsists");
-      }
-
-      for (task of obj.tasks) {
-        if (task.name != taskName) continue;
-
-        task.name = newName;
-      }
-    }
-
-    localStorage.setItem("projects-data", JSON.stringify(projectsData));
-
-    let projects = document.querySelectorAll(".projects-box .proj");
-
-    projects.forEach((proj) => {
-      if (!proj.classList.contains("active")) return;
-
-      appendTasksFrom(proj.getAttribute("data-name"));
-    });
-
-    this.parentNode.parentNode.remove();
-  });
-
-  let exitBtn = document.createElement("button");
-  exitBtn.classList.add("exit-btn");
-  exitBtn.innerHTML = `x`;
-
-  exitBtn.addEventListener("click", function () {
-    this.parentNode.parentNode.remove();
-  });
-
-  inputModal.append(input, confirmBtn, exitBtn);
-
-  container.append(layover, inputModal);
-
-  document.body.append(container);
-
-  input.focus();
-});
-
 // ! (clear board)
 
 let clearBoardBtn = document.querySelector("aside .task-control .clear-board");
@@ -696,7 +672,8 @@ document.addEventListener("click", function (e) {
   if (
     e.target.classList.contains("yes") &&
     document.querySelector(".confirm-modal") !== null
-  ) clearActiveProjectBoard();
+  )
+    clearActiveProjectBoard();
 });
 
 document.addEventListener("click", function (e) {

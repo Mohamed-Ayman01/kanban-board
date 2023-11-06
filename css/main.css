@@ -188,7 +188,7 @@ aside.show {
     transform: translateX(-100%);
     position: fixed;
     height: 100%;
-    z-index: 10;
+    z-index: 8;
   }
 }
 
