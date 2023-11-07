@@ -104,6 +104,7 @@ function appendTasksFrom(activeProjectName) {
 
         taskBox.draggable = true;
         taskBox.setAttribute("data-name", task.name);
+        taskBox.setAttribute("data-description", task.description);
 
         function onDragStart() {
           taskBox.classList.add("dragging");
@@ -153,31 +154,43 @@ function appendTasksFrom(activeProjectName) {
 
         editBtn.addEventListener("click", () => {
           let taskName = taskBox.getAttribute("data-name");
+          let taskDescription = taskBox.getAttribute("data-description");
 
           // ! Make function to create modal
           let container = document.createElement("div");
           container.classList.add("container");
 
-          let inputModal = document.createElement("div");
-          inputModal.classList.add("input-modal");
+          let taskEditModal = document.createElement("div");
+          taskEditModal.classList.add("task-edit-modal");
 
-          let layover = document.createElement("div");
-          layover.classList.add("input-modal-layover");
+          let overlay = document.createElement("div");
+          overlay.classList.add("task-edit-overlay");
 
-          let input = document.createElement("input");
-          input.setAttribute("data-value", taskName);
-          input.value = taskName;
-          input.placeholder = "new name";
+          let nameLabel = document.createElement("label")
+          nameLabel.textContent = "name:";
 
-          let confirmBtn = document.createElement("button");
-          confirmBtn.classList.add("confirm-btn");
-          confirmBtn.textContent = `confirm`;
+          let nameInput = document.createElement("input");
+          nameInput.setAttribute("data-name", taskName);
+          nameInput.value = taskName;
 
-          confirmBtn.addEventListener("click", function () {
-            let input = this.parentNode.querySelector("input");
-            let newName = input.value;
+          let descLabel = document.createElement("label")
+          descLabel.textContent = "description:";
 
-            if (newName === "") return notifyWith("input field is empty");
+          let textarea = document.createElement("textarea")
+          textarea.setAttribute("data-description", taskDescription)
+          textarea.value = taskDescription;
+
+          let saveBtn = document.createElement("button");
+          saveBtn.classList.add("save-btn");
+          saveBtn.textContent = `save`;
+
+          saveBtn.addEventListener("click", function () {
+            let currentName = taskName;
+            let newName = this.parentNode.querySelector("input").value;
+            let newDesc = this.parentNode.querySelector("textarea").value;
+
+            if (newName === "") return notifyWith("name field is empty");
+            if (newDesc === "") return notifyWith("description field is empty");
 
             let projectsData = getFromStorage("projects-data");
 
@@ -185,14 +198,18 @@ function appendTasksFrom(activeProjectName) {
               if (!obj.isActive) continue;
 
               for (task of obj.tasks) {
-                if (task.name === newName)
+                if (task.name === newName) {
+                  if (task.name === currentName) continue;
+
                   return notifyWith("this task already exsists");
+                }
               }
 
               for (task of obj.tasks) {
                 if (task.name != taskName) continue;
 
                 task.name = newName;
+                task.description = newDesc;
               }
             }
 
@@ -206,24 +223,26 @@ function appendTasksFrom(activeProjectName) {
               appendTasksFrom(proj.getAttribute("data-name"));
             });
 
-            this.parentNode.parentNode.remove();
+            taskEditModal.remove();
+
+            overlay.remove()
           });
 
           let exitBtn = document.createElement("button");
           exitBtn.classList.add("exit-btn");
-          exitBtn.innerHTML = `x`;
+          exitBtn.innerHTML = `X`;
 
           exitBtn.addEventListener("click", function () {
             this.parentNode.parentNode.remove();
           });
 
-          inputModal.append(input, confirmBtn, exitBtn);
+          taskEditModal.append(nameLabel, nameInput, descLabel, textarea, saveBtn, exitBtn);
 
-          container.append(layover, inputModal);
+          container.append(overlay, taskEditModal);
 
           document.body.append(container);
 
-          input.focus();
+          nameInput.focus();
         });
 
         let removeBtn = document.createElement("button");
@@ -266,11 +285,12 @@ function appendTasksFrom(activeProjectName) {
         let taskModal = document.createElement("div");
         taskModal.classList.add("task-modal");
 
+        let taskDate = new Date(task.date)
+
         taskModal.innerHTML = `
-        <h2>created at:</h2>
-        <div class="date">${task.date.split("T")[0]}</div>
         <h2>description:</h2>
         <div class="description">${task.description}</div>
+        <div class="date">${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}</div>
         `;
 
         taskBox.append(p, editBtn, removeBtn, taskModal);
@@ -312,30 +332,35 @@ function appendTabsFrom(projectsArr) {
       container.classList.add("container");
 
       let inputModal = document.createElement("div");
-      inputModal.classList.add("input-modal");
+      inputModal.classList.add("project-edit-modal");
 
       let layover = document.createElement("div");
-      layover.classList.add("input-modal-layover");
+      layover.classList.add("project-edit-overlay");
 
       let input = document.createElement("input");
       input.setAttribute("data-name", projectName);
       input.value = projectName;
-      input.placeholder = "new name";
+      input.placeholder = "project name";
 
       let confirmBtn = document.createElement("button");
-      confirmBtn.classList.add("confirm-btn");
-      confirmBtn.textContent = `confirm`;
+      confirmBtn.classList.add("save-btn");
+      confirmBtn.textContent = `save`;
 
       confirmBtn.addEventListener("click", function () {
         let newName = this.parentNode.querySelector("input").value;
+        let currentName = proj.getAttribute("data-name");
+        console.log(currentName);
 
-        if (newName === "") return notifyWith("input field is empty");
+        if (newName === "") return notifyWith("project name field is empty");
 
         let projectsData = getFromStorage("projects-data");
 
         for (obj of projectsData) {
-          if (obj.name === newName)
-            return notifyWith("this project name already used");
+          if (obj.name === newName) {
+            if (obj.name === currentName) continue;
+
+            return notifyWith("this project already exsists");
+          }
         }
 
         for (obj of projectsData) {
@@ -354,7 +379,7 @@ function appendTabsFrom(projectsArr) {
 
       let exitBtn = document.createElement("button");
       exitBtn.classList.add("exit-btn");
-      exitBtn.innerHTML = `x`;
+      exitBtn.innerHTML = `X`;
 
       exitBtn.addEventListener("click", function () {
         this.parentNode.parentNode.remove();
