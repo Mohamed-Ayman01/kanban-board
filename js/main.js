@@ -63,7 +63,7 @@ function appendTasksFrom(activeProjectName) {
   let projectsData = getFromStorage("projects-data");
 
   for (obj of projectsData) {
-    if (obj.name === activeProjectName) {
+    if (obj.name == activeProjectName) {
       let todoCont = document.querySelector(".board .todo-sect .task-cont");
       let inProgressCont = document.querySelector(
         ".board .in-progress-sect .task-cont",
@@ -189,8 +189,8 @@ function appendTasksFrom(activeProjectName) {
             let newName = this.parentNode.querySelector("input").value;
             let newDesc = this.parentNode.querySelector("textarea").value;
 
-            if (newName === "") return notifyWith("name field is empty");
-            if (newDesc === "") return notifyWith("description field is empty");
+            if (newName == "") return notifyWith("name field is empty");
+            if (newDesc == "") return notifyWith("description field is empty");
 
             let projectsData = getFromStorage("projects-data");
 
@@ -295,11 +295,11 @@ function appendTasksFrom(activeProjectName) {
 
         taskBox.append(p, editBtn, removeBtn, taskModal);
 
-        if (task.status === 1) {
+        if (task.status == 1) {
           todoCont.append(taskBox);
-        } else if (task.status === 2) {
+        } else if (task.status == 2) {
           inProgressCont.append(taskBox);
-        } else if (task.status === 3) {
+        } else if (task.status == 3) {
           completedCont.append(taskBox);
         }
       });
@@ -351,20 +351,20 @@ function appendTabsFrom(projectsArr) {
         let currentName = proj.getAttribute("data-name");
         console.log(currentName);
 
-        if (newName === "") return notifyWith("project name field is empty");
+        if (newName == "") return notifyWith("project name field is empty");
 
         let projectsData = getFromStorage("projects-data");
 
         for (obj of projectsData) {
-          if (obj.name === newName) {
-            if (obj.name === currentName) continue;
+          if (obj.name == newName) {
+            if (obj.name == currentName) continue;
 
             return notifyWith("this project already exsists");
           }
         }
 
         for (obj of projectsData) {
-          if (obj.name === input.getAttribute("data-name")) {
+          if (obj.name == input.getAttribute("data-name")) {
             obj.name = newName;
           }
         }
@@ -428,7 +428,7 @@ function appendTabsFrom(projectsArr) {
         timeBox.textContent = "00:00:00";
       }
 
-      projectsData = projectsData.filter((obj) => obj.name !== projectName);
+      projectsData = projectsData.filter((obj) => obj.name != projectName);
 
       localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
@@ -523,12 +523,12 @@ addProjectBtn.addEventListener("click", () => {
   let projects = getFromStorage("projects-data");
 
   let inputValue = addProjectInput.value;
-  let inputValueValid = inputValue !== "" ? true : false;
+  let inputValueValid = inputValue != "" ? true : false;
 
   addProjectInput.value = "";
 
   for (obj of projects) {
-    if (obj.name === inputValue)
+    if (obj.name == inputValue)
       return notifyWith("this project already exsists");
   }
 
@@ -548,7 +548,7 @@ window.addEventListener("click", (e) => {
   let currentEl = e.target;
   let currentElParent = currentEl.parentNode;
 
-  if (currentEl.tagName === "BUTTON") return;
+  if (currentEl.tagName == "BUTTON") return;
   if (!currentElParent.classList.contains("proj")) return;
 
   if (startTimerBtn.classList.contains("active")) stopTimer();
@@ -566,7 +566,7 @@ window.addEventListener("click", (e) => {
   saveTimerData(true);
 
   for (obj of projectsData) {
-    if (obj.name === currentEl.textContent) {
+    if (obj.name == currentEl.textContent) {
       obj.isActive = true;
     } else {
       obj.isActive = false;
@@ -605,8 +605,8 @@ addTaskBtn.addEventListener("click", () => {
   let taskName = taskNameInput.value;
   let taskDesc = taskDescInput.value;
 
-  if (taskName === "") return notifyWith("enter the task name");
-  if (taskDesc === "") return notifyWith("enter the task description");
+  if (taskName == "") return notifyWith("enter the task name");
+  if (taskDesc == "") return notifyWith("enter the task description");
   taskNameInput.value = "";
   taskDescInput.value = "";
 
@@ -615,7 +615,7 @@ addTaskBtn.addEventListener("click", () => {
   for (object of projectsData) {
     if (object.isActive) {
       for (task of object.tasks) {
-        if (task.name === taskName)
+        if (task.name == taskName)
           return notifyWith("this task already exsist");
       }
 
@@ -650,13 +650,13 @@ function onDragOver(e) {
     if (!obj.isActive) continue;
 
     for (task of obj.tasks) {
-      if (task.name !== dragging.getAttribute("data-name")) continue;
+      if (task.name != dragging.getAttribute("data-name")) continue;
 
-      if (taskCont.id === "todo") {
+      if (taskCont.id == "todo") {
         task.status = 1;
-      } else if (taskCont.id === "in-progress") {
+      } else if (taskCont.id == "in-progress") {
         task.status = 2;
-      } else if (taskCont.id === "completed") {
+      } else if (taskCont.id == "completed") {
         task.status = 3;
       }
     }
@@ -696,7 +696,7 @@ clearBoardBtn.addEventListener("click", function () {
 document.addEventListener("click", function (e) {
   if (
     e.target.classList.contains("yes") &&
-    document.querySelector(".confirm-modal") !== null
+    document.querySelector(".confirm-modal") != null
   )
     clearActiveProjectBoard();
 });
@@ -704,7 +704,7 @@ document.addEventListener("click", function (e) {
 document.addEventListener("click", function (e) {
   if (
     e.target.classList.contains("no") &&
-    document.querySelector(".confirm-modal") !== null
+    document.querySelector(".confirm-modal") != null
   ) {
     document.querySelector(".confirm-modal").remove();
     document.querySelector(".confirm-modal-overlay").remove();
@@ -786,3 +786,4 @@ function stopTimer() {
 }
 
 stopTimerBtn.addEventListener("click", stopTimer);
+
