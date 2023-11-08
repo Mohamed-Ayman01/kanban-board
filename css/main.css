@@ -431,7 +431,7 @@ aside .task-control .clear-board:hover {
   gap: 1rem;
   background-color: var(--green-500);
   position: relative;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 .board .progress-data {
