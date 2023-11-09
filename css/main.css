@@ -4,12 +4,12 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  font-family: 'Work Sans', sans-serif;
 }
 
 body {
   display: flex;
   min-height: 100vh;
-  font-family: 'Work Sans', sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -43,7 +43,7 @@ body {
 
 .pop-up {
   padding: 1rem 3rem;
-  position: absolute;
+  position: fixed;
   top: -80px;
   left: 50%;
   transform: translateX(-50%);
@@ -51,17 +51,18 @@ body {
   background-color: var(--orange-200);
   color: white;
   border-radius: 4px;
-  opacity: .8;
+  opacity: .9;
   z-index: 100;
 }
 
 .project-edit-modal {
+  min-height: 150px;
   padding: 2.5rem 2.4rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -73,7 +74,7 @@ body {
 }
 
 .project-edit-overlay {
-  position: absolute;
+  position: fixed;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -110,7 +111,7 @@ body {
 }
 
 .task-edit-overlay {
-  position: absolute;
+  position: fixed;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -121,13 +122,14 @@ body {
 }
 
 .task-edit-modal {
+  width: clamp(300px, 40vw, 500px);
   padding: 2.5rem 2.4rem;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -148,7 +150,8 @@ body {
 }
 
 .task-edit-modal textarea {
-  min-height: 120px;
+  min-height: 150px;
+  resize: none;
 }
 
 .task-edit-modal .save-btn {
@@ -170,7 +173,7 @@ body {
 }
 
 .confirm-modal {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -207,7 +210,7 @@ body {
 }
 
 .confirm-modal-overlay {
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
   top: 0;
@@ -431,7 +434,7 @@ aside .task-control .clear-board:hover {
   gap: 1rem;
   background-color: var(--green-500);
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .board .progress-data {
@@ -519,6 +522,10 @@ aside .task-control .clear-board:hover {
 }
 
 @media (max-width: 950px) {
+  .board {
+    min-height: 100vh;
+  }
+  
   .board .sections {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
@@ -535,7 +542,18 @@ aside .task-control .clear-board:hover {
   color: white;
   text-transform: capitalize;
   letter-spacing: 1px;
-  border-bottom: 6px solid var(--green-500);
+  position: relative;
+}
+
+.board .sect .title::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: var(--green-500);
+  border-radius: 30px;
 }
 
 .board .sect .container {
@@ -546,13 +564,6 @@ aside .task-control .clear-board:hover {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-@media (max-width: 992px) {
-  .board .sect .container .task-cont {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
 }
 
 .board .sect .task-cont .task {
@@ -601,30 +612,24 @@ aside .task-control .clear-board:hover {
 
 .board .sect .task-cont .task .task-modal {
   margin-top: 0;
-  height: 0;
   padding: 0 1rem;
+  height: 0;
   width: 100%;
-  display: flex;
+  display: none;
+  position: relative;
   flex-direction: column;
   gap: 1rem;
   color: white;
   background-color: var(--green-300);
   border-radius: var(--border-radius);
-  transition: all .3s;
+  border: 1px solid var(--green-500);
   opacity: 0;
   line-break: auto;
-  overflow: hidden;
-  border: 1px solid var(--green-500);
+  transition: all .3s;
 }
-
-.board .sect .task-cont .task .task-modal .date {
-  color: var(--gray);
-  font-size: .9rem;
-  text-align: right;
-}
-
 
 .board .sect .task-cont .task .task-modal.show {
+  display: flex;
   margin-top: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -632,9 +637,30 @@ aside .task-control .clear-board:hover {
   opacity: 1;
 }
 
-.board .sect .task-cont .task .task-modal .splitter {
-  width: 100%;
-  height: 5px;
+.board .sect .task-cont .task .task-modal::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  width: 15px;
+  height: 15px;
+  background-color: var(--green-300);
+  border: 1px solid var(--green-500);
+  border-bottom: none;
+  border-right: none;
+  transform: rotateZ(45deg) translateY(55%);
+  border-radius: var(--border-radius);
+}
+
+.board .sect .task-cont .task .task-modal > * {
+  padding: .5rem;
+  border-radius: var(--border-radius);
   background-color: var(--green-400);
-  border-radius: 20px;
+}
+
+.board .sect .task-cont .task .task-modal .date {
+  width: fit-content;
+  color: var(--gray);
+  font-size: .9rem;
+  text-align: right;
 }

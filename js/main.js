@@ -190,7 +190,7 @@ function appendTasksFrom(activeProjectName) {
             let newDesc = this.parentNode.querySelector("textarea").value;
 
             if (newName == "") return notifyWith("name field is empty");
-            if (newDesc == "") return notifyWith("description field is empty");
+            if (newDesc == "") newDesc = "no description";
 
             let projectsData = getFromStorage("projects-data");
 
@@ -288,9 +288,8 @@ function appendTasksFrom(activeProjectName) {
         let taskDate = new Date(task.date)
 
         taskModal.innerHTML = `
-        <h2>description:</h2>
         <div class="description">${task.description}</div>
-        <div class="date">${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}</div>
+        <div class="date"><i class="fas fa-clock"></i> ${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}:${taskDate.getSeconds()}</div>
         `;
 
         taskBox.append(p, editBtn, removeBtn, taskModal);
@@ -606,7 +605,8 @@ addTaskBtn.addEventListener("click", () => {
   let taskDesc = taskDescInput.value;
 
   if (taskName == "") return notifyWith("enter the task name");
-  if (taskDesc == "") return notifyWith("enter the task description");
+  if (taskDesc == "") taskDesc = "no description";
+
   taskNameInput.value = "";
   taskDescInput.value = "";
 
@@ -671,7 +671,7 @@ taskSects.forEach((sect) => {
   sect.addEventListener("dragover", onDragOver);
 });
 
-// ! (clear board)
+// ! clear board
 
 let clearBoardBtn = document.querySelector("aside .task-control .clear-board");
 
