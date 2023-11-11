@@ -104,6 +104,7 @@ function appendTasksFrom(activeProjectName) {
 
         taskBox.draggable = true;
         taskBox.setAttribute("data-name", task.name);
+        // taskBox.setAttribute("data-estimation", task.estimation);
         taskBox.setAttribute("data-description", task.description);
 
         function onDragStart() {
@@ -154,6 +155,7 @@ function appendTasksFrom(activeProjectName) {
 
         editBtn.addEventListener("click", () => {
           let taskName = taskBox.getAttribute("data-name");
+          // let taskEstimation = taskBox.getAttribute("data-estimation");
           let taskDescription = taskBox.getAttribute("data-description");
 
           // ! Make function to create modal
@@ -170,8 +172,19 @@ function appendTasksFrom(activeProjectName) {
           nameLabel.textContent = "name:";
 
           let nameInput = document.createElement("input");
+          nameInput.className = "name";
           nameInput.setAttribute("data-name", taskName);
           nameInput.value = taskName;
+
+          // let estimationLabel = document.createElement("label")
+          // estimationLabel.textContent = "estimation:";
+
+          // let estimationInput = document.createElement("input");
+          // estimationInput.className = "estimation";
+          // estimationInput.setAttribute("type", "number");
+          // estimationInput.setAttribute("min", "0");
+          // estimationInput.setAttribute("data-estimation", taskEstimation);
+          // estimationInput.value = taskName;
 
           let descLabel = document.createElement("label")
           descLabel.textContent = "description:";
@@ -186,11 +199,16 @@ function appendTasksFrom(activeProjectName) {
 
           saveBtn.addEventListener("click", function () {
             let currentName = taskName;
-            let newName = this.parentNode.querySelector("input").value;
+            let newName = this.parentNode.querySelector("input.name").value;
+            // let newEstimation = this.parentNode.querySelector("input.estimation").value;
             let newDesc = this.parentNode.querySelector("textarea").value;
 
+            
             if (newName == "") return notifyWith("name field is empty");
+            // if (newEstimation == "") newEstimation = "no estimation";
             if (newDesc == "") newDesc = "no description";
+
+            // newEstimation = newEstimation == "no estimation" ? newEstimation : `${newEstimation} hours`;
 
             let projectsData = getFromStorage("projects-data");
 
@@ -209,6 +227,7 @@ function appendTasksFrom(activeProjectName) {
                 if (task.name != taskName) continue;
 
                 task.name = newName;
+                // task.estimation = newEstimation;
                 task.description = newDesc;
               }
             }
@@ -286,10 +305,12 @@ function appendTasksFrom(activeProjectName) {
         taskModal.classList.add("task-modal");
 
         let taskDate = new Date(task.date)
+        let taskEstimation =  task.estimation == "no estimation" ? task.estimation : `${task.estimation} hours`;
 
         taskModal.innerHTML = `
         <div class="description">${task.description}</div>
-        <div class="date"><i class="fas fa-clock"></i> ${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}:${taskDate.getSeconds()}</div>
+        <div class="estimation"><i class="fas fa-clock"></i>${taskEstimation}</div>
+        <div class="date"><i class="fas fa-calendar"></i>${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}:${taskDate.getSeconds()}</div>
         `;
 
         taskBox.append(p, editBtn, removeBtn, taskModal);
@@ -598,17 +619,21 @@ let taskNameInput = document.querySelector(
   "aside .task-control #task-name-input",
 );
 let taskDescInput = document.querySelector("aside .task-control textarea");
+let taskEstimaitonInput = document.querySelector("aside .task-control #task-estimation-input");
 let addTaskBtn = document.querySelector("aside .task-control .add-task");
 
 addTaskBtn.addEventListener("click", () => {
   let taskName = taskNameInput.value;
+  let taskEstimaiton = taskEstimaitonInput.value;
   let taskDesc = taskDescInput.value;
 
   if (taskName == "") return notifyWith("enter the task name");
   if (taskDesc == "") taskDesc = "no description";
+  if (taskEstimaiton == "") taskEstimaiton = "no estimation";
 
   taskNameInput.value = "";
   taskDescInput.value = "";
+  taskEstimaitonInput.value = "";
 
   let projectsData = getFromStorage("projects-data");
 
@@ -621,6 +646,7 @@ addTaskBtn.addEventListener("click", () => {
 
       object.tasks.push({
         name: taskName,
+        estimation: taskEstimaiton,
         description: taskDesc,
         status: 1,
         date: new Date(),

@@ -391,7 +391,7 @@ aside .task-control {
   gap: .75rem;
 }
 
-aside .task-control #task-name-input,
+aside .task-control input,
 aside .task-control textarea {
   padding: .5rem;
   background-color: transparent;
@@ -401,19 +401,19 @@ aside .task-control textarea {
   border-radius: var(--border-radius);
 }
 
-aside .task-control #task-name-input::placeholder,
+aside .task-control input::placeholder,
 aside .task-control textarea::placeholder {
   color: #b6b6b67c;
 }
 
-aside .task-control #task-name-input:focus,
+aside .task-control input:focus,
 aside .task-control textarea:focus {
   background-color: var(--green-400);
 }
 
 aside .task-control textarea {
   resize: none;
-  height: 150px;
+  height: 130px;
 }
 
 aside .task-control .clear-board {
@@ -630,6 +630,8 @@ aside .task-control .clear-board:hover {
 
 .board .sect .task-cont .task .task-modal.show {
   display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
   margin-top: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -658,8 +660,16 @@ aside .task-control .clear-board:hover {
   background-color: var(--green-400);
 }
 
-.board .sect .task-cont .task .task-modal .date {
+.board .sect .task-cont .task .task-modal .description {
+  width: 100%;
+}
+
+.board .sect .task-cont .task .task-modal :is(.date, .estimation) {
   width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
   color: var(--gray);
   font-size: .9rem;
   text-align: right;
