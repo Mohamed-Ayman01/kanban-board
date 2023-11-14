@@ -516,8 +516,9 @@ aside .task-control .clear-board:hover {
 
 .board .sections .sect {
   background-color: var(--green-400);
-  overflow: hidden;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--border-radius);
 }
 
@@ -557,7 +558,9 @@ aside .task-control .clear-board:hover {
 }
 
 .board .sect .container {
-  padding: 1rem .75rem;
+  flex: 1;
+  overflow: auto;
+  padding: 1rem 0.75rem;
 }
 
 .board .sect .container .task-cont {

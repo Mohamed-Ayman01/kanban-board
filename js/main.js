@@ -438,7 +438,6 @@ function appendTabsFrom(projectsArr) {
 
     removeBtn.addEventListener("click", () => {
       let projectName = proj.getAttribute("data-name");
-
       let projectsData = getFromStorage("projects-data");
 
       for (obj of projectsData) {
@@ -465,7 +464,11 @@ function appendTabsFrom(projectsArr) {
 
       projectsData = projectsData.filter((obj) => obj.name != projectName);
 
-      projectsData[projectsData.length - 1].isActive = true;
+      for (obj of projectsData) {
+        if (obj.isActive) continue;
+
+        projectsData[0].isActive = true;
+      }
 
       localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
@@ -725,36 +728,35 @@ clearBoardBtn.addEventListener("click", function () {
   let confirmModal = document.createElement("div");
   confirmModal.classList.add("confirm-modal");
 
-  confirmModal.innerHTML = `
-  <p>are you sure you wan't to clear the board?</p>
-  <div class="row">
-    <button class="yes">yes</button>
-    <button class="no">no</button>
-  </div>
-  `;
+  let question = document.createElement("p");
+  question.textContent = "are you sure you wan't to clear the board?";
+
+  let buttonsRow = document.createElement("div")
+  buttonsRow.classList.add("row");
+
+  let yesBtn = document.createElement("button")
+  yesBtn.textContent = "yes";
+  yesBtn.classList.add("yes")
+
+  yesBtn.addEventListener("click", clearActiveProjectBoard)
+
+  let noBtn = document.createElement("button")
+  noBtn.textContent = "no";
+  noBtn.classList.add("no")
+
+  noBtn.addEventListener("click", () => {
+    document.querySelector(".confirm-modal").remove();
+    document.querySelector(".confirm-modal-overlay").remove();
+  })
+
+  buttonsRow.append(yesBtn, noBtn);
+
+  confirmModal.append(question, buttonsRow)
 
   let confirmModalOverlay = document.createElement("div");
   confirmModalOverlay.classList.add("confirm-modal-overlay");
 
   document.body.append(confirmModal, confirmModalOverlay);
-});
-
-document.addEventListener("click", function (e) {
-  if (
-    e.target.classList.contains("yes") &&
-    document.querySelector(".confirm-modal") != null
-  )
-    clearActiveProjectBoard();
-});
-
-document.addEventListener("click", function (e) {
-  if (
-    e.target.classList.contains("no") &&
-    document.querySelector(".confirm-modal") != null
-  ) {
-    document.querySelector(".confirm-modal").remove();
-    document.querySelector(".confirm-modal-overlay").remove();
-  }
 });
 
 // ! menu on phone
@@ -781,7 +783,7 @@ function saveTimerData(clearCounters) {
     if (!obj.isActive) continue;
 
     obj.workTime = timeBox.textContent.split(":").map((el) => +el);
-    console.log(obj.workTime);
+    // console.log(obj.workTime);
   }
 
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
