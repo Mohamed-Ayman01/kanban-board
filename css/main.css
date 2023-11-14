@@ -523,7 +523,7 @@ aside .task-control .clear-board:hover {
 
 @media (max-width: 950px) {
   .board {
-    min-height: 100vh;
+    height: auto;
   }
   
   .board .sections {

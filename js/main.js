@@ -357,7 +357,7 @@ function appendTabsFrom(projectsArr) {
 
     let editBtn = document.createElement("button");
     editBtn.classList.add("edit-tab");
-    editBtn.title = "edit tab"
+    editBtn.title = "edit tab";
 
     editBtn.addEventListener("click", () => {
       let projectName = proj.getAttribute("data-name");
@@ -464,6 +464,8 @@ function appendTabsFrom(projectsArr) {
       }
 
       projectsData = projectsData.filter((obj) => obj.name != projectName);
+
+      projectsData[projectsData.length - 1].isActive = true;
 
       localStorage.setItem("projects-data", JSON.stringify(projectsData));
 
