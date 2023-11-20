@@ -102,8 +102,11 @@ function appendTasksFrom(activeProjectName) {
         let taskBox = document.createElement("div");
         taskBox.classList.add("task");
 
+        console.log(task)
+
         taskBox.draggable = true;
         taskBox.setAttribute("data-name", task.name);
+        taskBox.setAttribute("data-status", task.status);
         taskBox.setAttribute("data-estimation", task.estimation);
         taskBox.setAttribute("data-description", task.description);
 
@@ -314,18 +317,75 @@ function appendTasksFrom(activeProjectName) {
         let taskModal = document.createElement("div");
         taskModal.classList.add("task-modal");
 
+        let statusBtns = document.createElement("div")
+        statusBtns.className = "status-btns";
+
+        let statusStages = ["todo", "in progress", "completed"]
+
+        for (let i = 1; i <= 3; i++) {
+          let btn = document.createElement("button")
+          btn.setAttribute("data-status", `${i}`);
+          btn.innerText = statusStages[i - 1];
+
+          if (task.status == i) btn.classList.add("active");
+
+          btn.onclick = () => {
+            let projectsData = getFromStorage("projects-data");
+
+            statusBtns.querySelectorAll("button").forEach(btn => {
+              btn.classList.remove("active")
+            })
+
+            for (obj of projectsData) {
+              if (!obj.isActive) continue;
+
+              for (task of obj.tasks) {
+                if (task.name != taskBox.getAttribute("data-name")) continue;
+
+                let btnDataStatus = +btn.getAttribute("data-status")
+
+                task.status = btnDataStatus;
+
+                if (btnDataStatus == 1) {
+                  todoCont.append(taskBox)
+                } else if (btnDataStatus == 2) {
+                  inProgressCont.append(taskBox)
+                } else if (btnDataStatus == 3) {
+                  completedCont.append(taskBox)
+                }
+              }
+            }
+
+            localStorage.setItem("projects-data", JSON.stringify(projectsData));
+            
+            btn.classList.add("active")
+          }
+
+          statusBtns.append(btn)
+        }
+
         let taskDate = new Date(task.date);
         let taskEstimation =
           task.estimation == "no estimation"
             ? task.estimation
             : `${task.estimation} hours`;
 
-        taskModal.innerHTML = `
-        <div class="description" title="description">${task.description}</div>
-        <div class="estimation" title="time estimation"><i class="fas fa-clock"></i>${taskEstimation}</div>
-        <div class="date" title="creation date"><i class="fas fa-calendar"></i>${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}:${taskDate.getSeconds()}</div>
-        `;
+        let description = document.createElement("div");
+        description.className = "description";
+        description.title = "description";
+        description.innerHTML = task.description;
 
+        let estimation = document.createElement("div");
+        estimation.className = "estimation";
+        estimation.title = "time estimation";
+        estimation.innerHTML = `<i class="fas fa-clock"></i>${taskEstimation}`;
+
+        let date = document.createElement("div");
+        date.className = "date";
+        date.title = "creation date";
+        date.innerHTML = `<i class="fas fa-calendar"></i>${taskDate.getDate()}/${taskDate.getMonth()}/${taskDate.getFullYear()}, ${taskDate.getHours()}:${taskDate.getMinutes()}:${taskDate.getSeconds()}`;
+        
+        taskModal.append(statusBtns, description, estimation, date)
         taskBox.append(p, editBtn, removeBtn, taskModal);
 
         if (task.status == 1) {
@@ -639,24 +699,24 @@ let taskNameInput = document.querySelector(
   "aside .task-control #task-name-input",
 );
 let taskDescInput = document.querySelector("aside .task-control textarea");
-let taskEstimaitonInput = document.querySelector(
+let taskEstimationInput = document.querySelector(
   "aside .task-control #task-estimation-input",
 );
 let addTaskBtn = document.querySelector("aside .task-control .add-task");
 
 addTaskBtn.addEventListener("click", () => {
   let taskName = taskNameInput.value;
-  let taskEstimaiton = taskEstimaitonInput.value;
+  let taskEstimation = taskEstimationInput.value;
   let taskDesc = taskDescInput.value;
 
   if (taskName == "") return notifyWith("enter the task name");
   if (taskDesc == "") taskDesc = "no description";
-  if (taskEstimaiton == "" || taskEstimation == 0)
-    taskEstimaiton = "no estimation";
+  if (taskEstimation == "" || taskEstimation == 0)
+  taskEstimation = "no estimation";
 
   taskNameInput.value = "";
   taskDescInput.value = "";
-  taskEstimaitonInput.value = "";
+  taskEstimationInput.value = "";
 
   let projectsData = getFromStorage("projects-data");
 
@@ -669,7 +729,7 @@ addTaskBtn.addEventListener("click", () => {
 
       object.tasks.push({
         name: taskName,
-        estimation: taskEstimaiton,
+        estimation: taskEstimation,
         description: taskDesc,
         status: 1,
         date: new Date(),
@@ -701,12 +761,18 @@ function onDragOver(e) {
     for (task of obj.tasks) {
       if (task.name != dragging.getAttribute("data-name")) continue;
 
+      let statusBtns = dragging.querySelectorAll(".task-modal .status-btns button");
+      statusBtns.forEach((el) => el.classList.remove("active"));
+
       if (taskCont.id == "todo") {
         task.status = 1;
+        statusBtns[0].classList.add("active")
       } else if (taskCont.id == "in-progress") {
         task.status = 2;
+        statusBtns[1].classList.add("active")
       } else if (taskCont.id == "completed") {
         task.status = 3;
+        statusBtns[2].classList.add("active")
       }
     }
   }

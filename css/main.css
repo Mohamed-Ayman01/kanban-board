@@ -258,8 +258,8 @@ aside .menu {
   right: 0;
   padding: 1rem;
   transform: translateX(100%);
-  background-color: var(--green-300);
-  color: var(--green-200);
+  background-color: var(--green-200);
+  color: var(--green-300);
   z-index: 10;
   font-size: 1rem;
   transition: .3s;
@@ -657,10 +657,34 @@ aside .task-control .clear-board:hover {
   border-radius: var(--border-radius);
 }
 
-.board .sect .task-cont .task .task-modal > * {
+.board .sect .task-cont .task .task-modal > *:not(.status-btns) {
   padding: .5rem;
   border-radius: var(--border-radius);
   background-color: var(--green-400);
+}
+
+.board .sect .task-cont .task .task-modal .status-btns {
+  display: flex;
+  gap: .5rem;
+}
+
+.board .sect .task-cont .task .task-modal .status-btns button {
+  padding: .5rem 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--green-200);
+  background-color: transparent;
+  color: var(--green-200);
+  transition: all .3s;
+  transition-property: color, background-color;
+}
+
+.board .sect .task-cont .task .task-modal .status-btns button:not(.active):hover {
+  background-color: var(--green-400);
+}
+
+.board .sect .task-cont .task .task-modal .status-btns button.active {
+  background-color: var(--green-200);
+  color: var(--green-300);
 }
 
 .board .sect .task-cont .task .task-modal .description {
