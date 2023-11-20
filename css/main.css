@@ -665,6 +665,7 @@ aside .task-control .clear-board:hover {
 
 .board .sect .task-cont .task .task-modal .status-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: .5rem;
 }
 
