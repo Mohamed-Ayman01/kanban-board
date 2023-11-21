@@ -19,6 +19,10 @@ window.addEventListener("beforeunload", saveTimerData);
 //! check if there are any saved tabs
 window.addEventListener("load", checkForTabs);
 
+function getFromStorage(item) {
+  return JSON.parse(localStorage.getItem(item));
+}
+
 //! change completion status in stoarage
 function calcCompletion(projectsData) {
   for (obj of projectsData) {
@@ -32,8 +36,15 @@ function calcCompletion(projectsData) {
   localStorage.setItem("projects-data", JSON.stringify(projectsData));
 }
 
-function getFromStorage(item) {
-  return JSON.parse(localStorage.getItem(item));
+function updateProgressBar(completionValue) {
+  // calcCompletion(getFromStorage("projects-data"));
+
+  let progressBar = document.querySelector(".progress-data .completion-data .progress-bar")
+  let progressValue = Math.round(completionValue) ?? 0;
+
+  progressBar.innerHTML = `${progressValue}% &nbsp; `;
+  progressBar.setAttribute("data-progress", progressValue);
+  progressBar.style.width = `${progressValue}%`;
 }
 
 function clearActiveProjectBoard() {
@@ -64,6 +75,8 @@ function appendTasksFrom(activeProjectName) {
 
   for (obj of projectsData) {
     if (obj.name == activeProjectName) {
+      updateProgressBar(obj.completion)
+
       let todoCont = document.querySelector(".board .todo-sect .task-cont");
       let inProgressCont = document.querySelector(
         ".board .in-progress-sect .task-cont",
@@ -76,33 +89,9 @@ function appendTasksFrom(activeProjectName) {
       inProgressCont.innerHTML = "";
       completedCont.innerHTML = "";
 
-      let progressBox = document.querySelector(
-        ".progress-data .completion-data",
-      );
-
-      if (
-        document.querySelector(".progress-data .completion-data .progress-bar")
-      ) {
-        document
-          .querySelector(".progress-data .completion-data .progress-bar")
-          .remove();
-      }
-
-      let progressBar = document.createElement("div");
-      let progressValue = Math.round(obj.completion) ?? 0;
-
-      progressBar.classList.add("progress-bar");
-      progressBar.setAttribute("data-progress", progressValue);
-      progressBar.innerHTML = `${progressValue}% &nbsp;`;
-      progressBar.style.width = `${progressValue}%`;
-
-      progressBox.append(progressBar);
-
       obj.tasks.forEach((task) => {
         let taskBox = document.createElement("div");
         taskBox.classList.add("task");
-
-        console.log(task)
 
         taskBox.draggable = true;
         taskBox.setAttribute("data-name", task.name);
@@ -129,14 +118,7 @@ function appendTasksFrom(activeProjectName) {
             objCompletion = obj.completion;
           }
 
-          let progressBar = document.querySelector(
-            ".board .progress-data .completion-data .progress-bar",
-          );
-          let progressValue = Math.round(objCompletion) ?? 0;
-
-          progressBar.innerHTML = `${progressValue}% &nbsp; `;
-          progressBar.setAttribute("data-progress", progressValue);
-          progressBar.style.width = `${progressValue}%`;
+          updateProgressBar(objCompletion)
         }
 
         taskBox.addEventListener("dragend", onDragEnd);
@@ -357,6 +339,18 @@ function appendTasksFrom(activeProjectName) {
             }
 
             localStorage.setItem("projects-data", JSON.stringify(projectsData));
+
+            calcCompletion(getFromStorage("projects-data"));
+
+            let objCompletion;
+  
+            for (obj of getFromStorage("projects-data")) {
+              if (!obj.isActive) continue;
+  
+              objCompletion = obj.completion;
+            }
+  
+            updateProgressBar(objCompletion)
             
             btn.classList.add("active")
           }
