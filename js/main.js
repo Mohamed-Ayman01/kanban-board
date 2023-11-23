@@ -854,6 +854,7 @@ function saveTimerData(clearCounters) {
     hoursCounter = 0;
   }
 }
+let progressBox = document.querySelector(".progress-data");
 let timeBox = document.querySelector(".progress-data .timer-data .time");
 let startTimerBtn = document.querySelector(".progress-data .timer-data .start");
 let stopTimerBtn = document.querySelector(".progress-data .timer-data .stop");
@@ -882,6 +883,7 @@ startTimerBtn.addEventListener("click", () => {
     }, 1000);
 
     startTimerBtn.classList.add("active");
+    progressBox.classList.add("active");
   }
 });
 
@@ -891,6 +893,7 @@ function stopTimer() {
   saveTimerData();
 
   startTimerBtn.classList.remove("active");
+  progressBox.classList.remove("active");
 }
 
 stopTimerBtn.addEventListener("click", stopTimer);

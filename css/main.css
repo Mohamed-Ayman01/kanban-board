@@ -445,6 +445,11 @@ aside .task-control .clear-board:hover {
   align-items: center;
   gap: 1rem;
   border-radius: var(--border-radius);
+  transition: box-shadow .3s;
+}
+
+.board .progress-data.active {
+  box-shadow: 0 0 0 2px var(--green-200), 0 0 0 5px #63c7b287;
 }
 
 @media (max-width: 600px) {
